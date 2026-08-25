@@ -2,6 +2,7 @@
   "expo": {
     "name": "dusukbutce-mobile",
     "slug": "dusukbutce-mobile",
+    "scheme": "dusukbutcemobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,6 +21,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      "expo-splash-screen",
+      "expo-status-bar"
+    ]
   }
 }
