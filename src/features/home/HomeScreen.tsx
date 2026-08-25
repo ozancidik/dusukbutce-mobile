@@ -13,7 +13,7 @@ const MENU_ITEMS: MenuItem[] = [
   { icon: '🏷️', label: 'Satılık İlanlar', href: '/listings' },
   { icon: '💰', label: 'Bize Sat', href: '/sell' },
   { icon: '📋', label: 'Tekliflerim', href: '/offers' },
-  { icon: '👤', label: 'Profil' },
+  { icon: '👤', label: 'Profil', href: '/profile' },
 ];
 
 export function HomeScreen() {
