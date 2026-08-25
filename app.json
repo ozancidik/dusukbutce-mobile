@@ -27,7 +27,13 @@
       "expo-secure-store",
       "expo-font",
       "expo-splash-screen",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Sattığınız ürünün fotoğraflarını eklemek için galerinize erişim gerekiyor."
+        }
+      ]
     ]
   }
 }

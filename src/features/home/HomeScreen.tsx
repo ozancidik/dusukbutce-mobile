@@ -11,7 +11,7 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
   { icon: '🏷️', label: 'Satılık İlanlar', href: '/listings' },
-  { icon: '💰', label: 'Bize Sat' },
+  { icon: '💰', label: 'Bize Sat', href: '/sell' },
   { icon: '📋', label: 'Tekliflerim' },
   { icon: '👤', label: 'Profil' },
 ];
