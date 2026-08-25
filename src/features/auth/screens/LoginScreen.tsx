@@ -106,6 +106,12 @@ export function LoginScreen() {
             </Pressable>
           </Link>
         </View>
+
+        <Link href="/listings" asChild>
+          <Pressable style={styles.browseLink}>
+            <Text style={styles.browseLinkText}>Giriş yapmadan ilanlara göz at →</Text>
+          </Pressable>
+        </Link>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -144,4 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: theme.spacing.lg,
   },
+  browseLink: { alignItems: 'center', marginTop: theme.spacing.lg },
+  browseLinkText: { color: theme.colors.textMuted, fontFamily: theme.fontFamily.medium, fontSize: 14 },
 });

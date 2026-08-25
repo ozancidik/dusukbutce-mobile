@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   useFonts,
   Inter_400Regular,
@@ -13,6 +14,8 @@ import { useAuthStore } from '../src/features/auth/store/authStore';
 import { theme } from '../src/core/theme/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -50,13 +53,16 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={!isLoggedIn}>
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
-      <Stack.Protected guard={isLoggedIn}>
-        <Stack.Screen name="(app)" />
-      </Stack.Protected>
-    </Stack>
+    <QueryClientProvider client={queryClient}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={!isLoggedIn}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
+        <Stack.Screen name="listings" />
+      </Stack>
+    </QueryClientProvider>
   );
 }

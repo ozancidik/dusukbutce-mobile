@@ -10,6 +10,8 @@ export const endpoints = {
   updateProfile: '/api/auth/update-profile',
   upload: '/api/upload',
   submissions: '/api/submissions',
+  listings: '/api/listings',
+  listingDetail: (id: string) => `/api/listings/${id}`,
 };
 
 // Bu uçlar 401'de otomatik logout tetiklemeyecek istisnalar — henüz oturum
