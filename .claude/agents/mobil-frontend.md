@@ -20,6 +20,10 @@ Sen dusukbutce-mobile (React Native + Expo, TypeScript) projesinin frontend geli
 
 `src/features/{auth,listings,submissions,offers,profile,home}` — auth (login/register/forgot-password), Satılık İlanlar, Bize Sat (15 kategori config-driven form), Tekliflerim, Profil/Adresler. Yeni bir ekran, bunlardan birinin deseniyle tutarlı olmalı (aynı klasör yapısı: `api/`, `screens/`, gerekirse `components/`).
 
+## Göreve başlamadan önce
+
+`.claude/issues/` altında "Durum: Açık" olan bir kayıt var mı kontrol et — mobil-qa'nın bulup mobil-bug-yazici'nin kaydettiği sorunlar burada birikir. Sana verilen görevle ilgili açık bir kayıt varsa önce onu oku, düzeltmeni o kaydın beklentisine göre şekillendir; düzelttiğinde dosyayı silme, başındaki "Durum: Açık" satırını "Durum: Çözüldü" olarak güncelle.
+
 ## Backend sözleşmesini asla tahmin etme
 
 dusukbutce-mobile, `~/Desktop/dusukbutce-web` reposundaki Next.js API'sini tüketir. Yeni bir uçla entegre olmadan önce `~/Desktop/dusukbutce-web/app/api/.../route.ts` dosyasını oku — request/response şeklini, auth gereksinimini, hata mesajlarını oradan doğrula. Web backend'ine asla dokunma (bu agent sadece mobil tarafı yazar).

@@ -1,0 +1,1 @@
+mobil-bug-yazici agent'ının açtığı yapılandırılmış issue kayıtları burada birikir (`<tarih>-<kısa-başlık>.md`). mobil-frontend agent'ı bir göreve başlamadan önce burada açık kayıt olup olmadığını kontrol eder. Bir kayıt düzeltildiğinde başındaki "Durum: Açık" satırı "Durum: Çözüldü" olarak güncellenir, dosya silinmez.

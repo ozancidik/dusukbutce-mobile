@@ -6,6 +6,10 @@ dusukbutce-mobile, dusukbutce.com'un (Next.js/MongoDB, repo: `~/Desktop/dusukbut
 
 Mimari kısa özet (ayrıntı için `.claude/agents/mobil-frontend.md`): `expo-router` dosya-tabanlı navigasyon, Zustand (auth) + TanStack Query (sunucu verisi), tek bir `apiClient` (`src/core/network/apiClient.ts`), tema `src/core/theme/`. Her feature `src/features/<isim>/{api,screens,components}` düzeninde.
 
+## Subagent zinciri
+
+`.claude/agents/`: **mobil-frontend** (geliştirme) → **mobil-qa** (bağımsız test, `.claude/reports/`'a rapor) → **mobil-bug-yazici** (raporu `.claude/issues/`'a yapılandırılmış kayıt olarak açar) → **mobil-frontend** (kaydı okuyup düzeltir, "Durum: Çözüldü" yapar). Ayrıca **mobil-tasarim** (web'in mobil görünümünü RN tema/component'lerine çevirir) ve **mobil-metin** (Türkçe arayüz metinleri) bağımsız olarak çağrılır.
+
 ## Gözetimsiz (kullanıcı PC başında değilken) çalışma kuralları
 
 Bu proje zaman zaman kullanıcı PC başında değilken çalıştırılıyor. Hangi agent/oturum olursa olsun şu kurallar geçerli:
