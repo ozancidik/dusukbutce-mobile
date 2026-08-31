@@ -6,26 +6,37 @@ interface Props {
   onPress: () => void;
   isLoading?: boolean;
   disabled?: boolean;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'success' | 'danger';
+  size?: 'md' | 'lg';
 }
 
-export function PrimaryButton({ title, onPress, isLoading, disabled, variant = 'primary' }: Props) {
+const VARIANT_STYLES = {
+  primary: { container: 'primary' as const, text: 'textOnColor' as const },
+  secondary: { container: 'secondary' as const, text: 'textSecondary' as const },
+  success: { container: 'success' as const, text: 'textOnColor' as const },
+  danger: { container: 'danger' as const, text: 'textOnColor' as const },
+};
+
+export function PrimaryButton({ title, onPress, isLoading, disabled, variant = 'primary', size = 'md' }: Props) {
   const isDisabled = disabled || isLoading;
+  const { container, text } = VARIANT_STYLES[variant];
+  const isLight = variant === 'secondary';
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
       style={({ pressed }) => [
         styles.base,
-        variant === 'primary' ? styles.primary : styles.secondary,
+        size === 'lg' && styles.baseLg,
+        styles[container],
         isDisabled && styles.disabled,
         pressed && !isDisabled && styles.pressed,
       ]}
     >
       {isLoading ? (
-        <ActivityIndicator color={variant === 'primary' ? theme.colors.white : theme.colors.primary} />
+        <ActivityIndicator color={isLight ? theme.colors.primary : theme.colors.white} />
       ) : (
-        <Text style={variant === 'primary' ? styles.textPrimary : styles.textSecondary}>{title}</Text>
+        <Text style={[styles[text], size === 'lg' && styles.textLg]}>{title}</Text>
       )}
     </Pressable>
   );
@@ -39,6 +50,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: theme.spacing.md,
   },
+  baseLg: {
+    height: 56,
+    borderRadius: theme.radius.card,
+  },
+  textLg: {
+    fontSize: 19,
+    letterSpacing: 0.5,
+  },
   primary: {
     backgroundColor: theme.colors.primary,
   },
@@ -47,13 +66,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
+  success: {
+    backgroundColor: theme.colors.successLight,
+  },
+  danger: {
+    backgroundColor: theme.colors.danger,
+  },
   disabled: {
     opacity: 0.6,
   },
   pressed: {
     opacity: 0.85,
   },
-  textPrimary: {
+  textOnColor: {
     color: theme.colors.white,
     fontSize: 16,
     fontFamily: theme.fontFamily.semiBold,
