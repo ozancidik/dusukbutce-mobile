@@ -18,10 +18,6 @@ export function HomeScreen() {
     Alert.alert('Yakında', `${name} için satış formu yakında eklenecek.`);
   };
 
-  const showTeknikServisComingSoon = () => {
-    Alert.alert('Yakında', 'Teknik Servis randevu ekranı yakında eklenecek.');
-  };
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Bize Sat kartı */}
@@ -53,7 +49,7 @@ export function HomeScreen() {
           subtitle="🚚 İstanbul içi aynı gün teslim alalım"
         />
         <View style={styles.gap} />
-        <PrimaryButton title="TEKNİK SERVİS" variant="primary" size="lg" onPress={showTeknikServisComingSoon} />
+        <PrimaryButton title="TEKNİK SERVİS" variant="primary" size="lg" onPress={() => router.push('/teknik-servis')} />
 
         <Text style={styles.sectionTitle}>Kategoriler</Text>
         <View style={styles.categoryList}>
@@ -62,7 +58,7 @@ export function HomeScreen() {
               key={item.name}
               icon={item.icon}
               name={item.name}
-              onPress={showTeknikServisComingSoon}
+              onPress={() => router.push('/teknik-servis')}
             />
           ))}
         </View>

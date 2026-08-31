@@ -10,6 +10,7 @@ export const endpoints = {
   updateProfile: '/api/auth/update-profile',
   upload: '/api/upload',
   submissions: '/api/submissions',
+  technicalServiceSubmissions: '/api/technical-service-submissions',
   listings: '/api/listings',
   listingDetail: (id: string) => `/api/listings/${id}`,
 };

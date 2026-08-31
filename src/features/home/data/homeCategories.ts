@@ -35,8 +35,9 @@ export const BIZE_SAT_HOME_CATEGORIES: HomeCategoryItem[] = [
 ];
 
 // dusukbutce.com anasayfasındaki Teknik Servis kategori listesi (satır 721-730).
-// RN tarafında Teknik Servis'e ait bir ekran/route yok; bu liste yalnızca
-// görsel amaçlı, dokununca hiçbir yere yönlendirmiyor.
+// RN tarafında bu liste hem anasayfada görsel amaçlı hem de
+// src/features/technicalService/screens/TechnicalServiceLandingScreen.tsx'teki
+// gerçek Teknik Servis akışında (servis seçimi) kullanılıyor.
 export const TEKNIK_SERVIS_CATEGORIES: HomeCategoryItem[] = [
   { name: 'PC Onarım', icon: '🖥️' },
   { name: 'Laptop Tamiri', icon: '💻' },
