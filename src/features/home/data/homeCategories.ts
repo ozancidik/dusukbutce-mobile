@@ -1,8 +1,9 @@
 // dusukbutce.com anasayfasının mobil görünümündeki (isMobile dalı, app/page.tsx
 // satır 373-396) "Bize Sat" kategori listesiyle birebir aynı sıra ve isimler.
 // `formId` dolu olan kalemler src/features/submissions/config/categoryFormConfigs.ts
-// içinde gerçek bir forma karşılık gelir (/sell/<formId>). formId'siz kalemler
-// web'de var ama RN'de henüz forma sahip değil — bkz. görev raporu.
+// içinde gerçek bir forma karşılık gelir (/sell/<formId>). Tüm 21 kategori artık
+// bir forma sahip (formId?: hâlâ opsiyonel tip, ileride yeni kategori eklenirse
+// forma sahip olmadan önce "Yakında" rozetiyle gösterilebilsin diye).
 export interface HomeCategoryItem {
   name: string;
   icon: string;
@@ -10,9 +11,9 @@ export interface HomeCategoryItem {
 }
 
 export const BIZE_SAT_HOME_CATEGORIES: HomeCategoryItem[] = [
-  { name: 'Cep Telefonu', icon: '📱' },
+  { name: 'Cep Telefonu', icon: '📱', formId: 'phone' },
   { name: 'Dizüstü (Notebook)', icon: '💻', formId: 'notebook' },
-  { name: 'Masaüstü (Kasa)', icon: '🖥️' },
+  { name: 'Masaüstü (Kasa)', icon: '🖥️', formId: 'desktop' },
   { name: 'Monitör', icon: '🖥️', formId: 'monitor' },
   { name: 'Ekran Kartı', icon: '🎮', formId: 'graphics-card' },
   { name: 'İşlemci', icon: '⚙️', formId: 'processor' },
@@ -20,17 +21,17 @@ export const BIZE_SAT_HOME_CATEGORIES: HomeCategoryItem[] = [
   { name: 'SSD', icon: '💿', formId: 'ssd' },
   { name: 'Soğutucu', icon: '❄️', formId: 'cooler' },
   { name: 'Boş Kasa', icon: '📦', formId: 'case' },
-  { name: 'PlayStation', icon: '🎮' },
-  { name: 'Gamepad', icon: '🕹️' },
-  { name: 'Xbox', icon: '🎮' },
+  { name: 'PlayStation', icon: '🎮', formId: 'playstation' },
+  { name: 'Gamepad', icon: '🕹️', formId: 'gamepad' },
+  { name: 'Xbox', icon: '🎮', formId: 'xbox' },
   { name: 'Klavye', icon: '⌨️', formId: 'keyboard' },
   { name: 'Mouse', icon: '🖱️', formId: 'mouse' },
   { name: 'Tablet', icon: '📱', formId: 'tablet' },
   { name: 'Kulaklık', icon: '🎧', formId: 'headphones' },
   { name: 'Ses Sistemi', icon: '🔊', formId: 'audio-system' },
-  { name: 'Fotokopi Makinesi', icon: '📄' },
-  { name: 'Yazıcı', icon: '🖨️' },
-  { name: 'Tarayıcı', icon: '🔍' },
+  { name: 'Fotokopi Makinesi', icon: '📄', formId: 'photocopier' },
+  { name: 'Yazıcı', icon: '🖨️', formId: 'printer' },
+  { name: 'Tarayıcı', icon: '🔍', formId: 'scanner' },
 ];
 
 // dusukbutce.com anasayfasındaki Teknik Servis kategori listesi (satır 721-730).
