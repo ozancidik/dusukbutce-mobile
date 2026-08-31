@@ -39,6 +39,7 @@ export function ProfileScreen() {
 // eder, bu yüzden effect+setState ile senkronize etmeye gerek yok.
 function ProfileForm({ data }: { data: ProfileData }) {
   const setUser = useAuthStore((s) => s.setUser);
+  const logout = useAuthStore((s) => s.logout);
   const [namePart, ...restParts] = (data.name || '').split(' ');
 
   const [firstNameValue, setFirstNameValue] = useState(namePart ?? '');
@@ -103,6 +104,18 @@ function ProfileForm({ data }: { data: ProfileData }) {
           <Text style={styles.addressesLinkChevron}>›</Text>
         </Pressable>
       </Link>
+
+      <Pressable
+        style={styles.logoutButton}
+        onPress={() =>
+          Alert.alert('Çıkış yap', 'Çıkış yapmak istediğinize emin misiniz?', [
+            { text: 'Vazgeç', style: 'cancel' },
+            { text: 'Çıkış Yap', style: 'destructive', onPress: () => logout() },
+          ])
+        }
+      >
+        <Text style={styles.logoutText}>Çıkış Yap</Text>
+      </Pressable>
     </ScrollView>
   );
 }
@@ -140,4 +153,14 @@ const styles = StyleSheet.create({
   },
   addressesLinkText: { fontSize: 15, fontFamily: theme.fontFamily.semiBold, color: theme.colors.textPrimary },
   addressesLinkChevron: { fontSize: 20, color: theme.colors.textMuted },
+  logoutButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.radius.card,
+    borderWidth: 1,
+    borderColor: theme.colors.danger,
+    padding: theme.spacing.md,
+    marginTop: theme.spacing.lg,
+  },
+  logoutText: { fontSize: 15, fontFamily: theme.fontFamily.semiBold, color: theme.colors.danger },
 });
