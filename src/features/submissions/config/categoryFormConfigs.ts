@@ -243,7 +243,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     endpoint: '/api/submissions',
     responseShape: 'standard',
     extraFields: [
-      { key: 'model', label: 'Model', type: 'select', options: ['PS5', 'PS5 Digital', 'PS4 Pro', 'PS4', 'PS4 Slim'], required: true },
+      { key: 'model', label: 'PlayStation Modeli', type: 'select', options: ['PS5', 'PS5 Digital', 'PS4 Pro', 'PS4', 'PS4 Slim'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['500GB', '825GB', '1TB', '2TB'] },
       { key: 'color', label: 'Renk', type: 'text' },
       { key: 'controllers', label: 'Kol Sayısı', type: 'text', keyboardType: 'numeric' },
@@ -258,7 +258,6 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     endpoint: '/api/submissions',
     responseShape: 'standard',
     extraFields: [
-      { key: 'model', label: 'Model', type: 'text', required: true },
       { key: 'condition', label: 'Durum', type: 'text' },
       { key: 'color', label: 'Renk', type: 'text' },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
@@ -271,7 +270,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     endpoint: '/api/submissions',
     responseShape: 'standard',
     extraFields: [
-      { key: 'model', label: 'Model', type: 'select', options: ['Xbox Series X', 'Xbox Series S', 'Xbox One X', 'Xbox One S', 'Xbox One'], required: true },
+      { key: 'model', label: 'Xbox Modeli', type: 'select', options: ['Xbox Series X', 'Xbox Series S', 'Xbox One X', 'Xbox One S', 'Xbox One'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['512GB', '1TB', '2TB'] },
       { key: 'color', label: 'Renk', type: 'text' },
       { key: 'controllers', label: 'Kol Sayısı', type: 'text', keyboardType: 'numeric' },
