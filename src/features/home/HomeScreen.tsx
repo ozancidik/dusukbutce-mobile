@@ -1,4 +1,4 @@
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { theme } from '../../core/theme/theme';
 import { PrimaryButton } from '../../shared/widgets/PrimaryButton';
@@ -19,7 +19,13 @@ export function HomeScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Image source={require('../../../assets/logo.png')} style={styles.headerLogo} resizeMode="contain" />
+        <Text style={styles.headerTitle}>Düşük Bütçe</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
       {/* Bize Sat kartı */}
       <View style={styles.card}>
         <SectionBanner title="2. El Ürününü" />
@@ -70,13 +76,27 @@ export function HomeScreen() {
         <View style={styles.gap} />
         <ListingSlider />
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
-  content: { padding: theme.spacing.md, paddingTop: 60, paddingBottom: theme.spacing.xl, gap: theme.spacing.md },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    paddingTop: 60,
+    paddingBottom: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    backgroundColor: theme.colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  headerLogo: { width: 36, height: 36 },
+  headerTitle: { fontSize: 18, fontFamily: theme.fontFamily.bold, color: theme.colors.textPrimary },
+  content: { padding: theme.spacing.md, paddingBottom: theme.spacing.xl, gap: theme.spacing.md },
   card: {
     backgroundColor: theme.colors.white,
     borderRadius: theme.radius.card,
