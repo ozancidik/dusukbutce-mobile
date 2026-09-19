@@ -1,0 +1,10 @@
+{
+  "id": "swarm-1789844523589-tybutw",
+  "topology": "hierarchical",
+  "maxAgents": 15,
+  "strategy": "development",
+  "v3Mode": false,
+  "permissions": null,
+  "initializedAt": "2026-09-19T19:02:03.589Z",
+  "status": "ready"
+}

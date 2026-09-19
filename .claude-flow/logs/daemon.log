@@ -1,0 +1,36 @@
+[2026-09-19T19:01:07.082Z] [INFO] AI workers disabled (default) - all workers run local-only. Enable with `daemon start --headless`, daemon.aiWorkers.enabled=true, or RUFLO_DAEMON_AI_WORKERS=1 (#2661)
+[2026-09-19T19:01:07.083Z] [INFO] Scheduled map (interval: 900s, first run in 0s)
+[2026-09-19T19:01:07.085Z] [INFO] Scheduled audit (interval: 600s, first run in 120s)
+[2026-09-19T19:01:07.087Z] [INFO] Scheduled optimize (interval: 900s, first run in 240s)
+[2026-09-19T19:01:07.089Z] [INFO] Scheduled consolidate (interval: 1800s, first run in 360s)
+[2026-09-19T19:01:07.091Z] [INFO] Scheduled testgaps (interval: 1200s, first run in 480s)
+[2026-09-19T19:01:07.093Z] [INFO] Scheduled backup (interval: 86400s, first run in 600s)
+[2026-09-19T19:01:07.095Z] [INFO] Scheduled harness (interval: 21600s, first run in 720s)
+[2026-09-19T19:01:07.097Z] [INFO] Lifecycle monitor active (workspace-removal, ttl=43200s, idle=1800s)
+[2026-09-19T19:01:07.120Z] [INFO] Daemon started (PID: 99791, CPUs: 8, workers: 7, maxCpuLoad: 6.4, minFreeMemoryPercent: 5%)
+[2026-09-19T19:01:07.123Z] [INFO] Worker map deferred: Memory too low: 3.4% free
+[2026-09-19T19:03:07.091Z] [INFO] Starting worker: audit (1/2 concurrent)
+[2026-09-19T19:03:07.092Z] [INFO] Worker audit completed in 7ms
+[2026-09-19T19:03:07.106Z] [INFO] Starting worker: map (1/2 concurrent)
+[2026-09-19T19:03:07.109Z] [INFO] Worker map completed in 8ms
+[2026-09-19T19:05:07.086Z] [INFO] Worker optimize deferred: Memory too low: 3.8% free
+[2026-09-19T19:07:07.088Z] [INFO] Worker consolidate deferred: Memory too low: 1.9% free
+[2026-09-19T19:09:07.091Z] [INFO] Worker testgaps deferred: CPU load too high: 8.21
+[2026-09-19T19:11:07.092Z] [INFO] Worker backup deferred: Memory too low: 1.8% free
+[2026-09-19T19:13:07.093Z] [INFO] Worker harness deferred: Memory too low: 0.5% free
+[2026-09-19T19:13:07.101Z] [INFO] Worker audit deferred: Memory too low: 0.5% free
+[2026-09-19T19:16:07.125Z] [INFO] Worker map deferred: CPU load too high: 9.55
+[2026-09-19T19:20:07.089Z] [INFO] Worker optimize deferred: CPU load too high: 15.57
+[2026-09-19T19:23:07.114Z] [INFO] Worker audit deferred: CPU load too high: 11.08
+[2026-09-19T19:29:07.093Z] [INFO] Worker testgaps deferred: CPU load too high: 7.48
+[2026-09-19T19:31:07.152Z] [INFO] Worker map deferred: Memory too low: 2.2% free
+[2026-09-19T19:33:07.117Z] [INFO] Worker audit deferred: Memory too low: 0.7% free
+[2026-09-19T19:33:07.168Z] [INFO] Daemon self-shutdown: idle for 1800s (no worker activity)
+[2026-09-19T19:33:07.171Z] [INFO] Stopped worker: map
+[2026-09-19T19:33:07.185Z] [INFO] Stopped worker: audit
+[2026-09-19T19:33:07.197Z] [INFO] Stopped worker: optimize
+[2026-09-19T19:33:07.206Z] [INFO] Stopped worker: consolidate
+[2026-09-19T19:33:07.216Z] [INFO] Stopped worker: testgaps
+[2026-09-19T19:33:07.223Z] [INFO] Stopped worker: backup
+[2026-09-19T19:33:07.228Z] [INFO] Stopped worker: harness
+[2026-09-19T19:33:07.246Z] [INFO] Daemon stopped

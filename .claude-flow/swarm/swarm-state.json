@@ -1,0 +1,23 @@
+{
+  "swarms": {
+    "swarm-1789844523589-tybutw": {
+      "swarmId": "swarm-1789844523589-tybutw",
+      "topology": "hierarchical",
+      "maxAgents": 15,
+      "status": "running",
+      "agents": [],
+      "tasks": [],
+      "config": {
+        "topology": "hierarchical",
+        "maxAgents": 15,
+        "strategy": "specialized",
+        "communicationProtocol": "message-bus",
+        "autoScaling": true,
+        "consensusMechanism": "majority"
+      },
+      "createdAt": "2026-09-19T19:02:03.589Z",
+      "updatedAt": "2026-09-19T19:02:03.589Z"
+    }
+  },
+  "version": "3.0.0"
+}

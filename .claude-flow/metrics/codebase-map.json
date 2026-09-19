@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-09-19T19:03:07.108Z",
+  "projectRoot": "/Users/ozan.cidik/Desktop/dusukbutce-mobile",
+  "structure": {
+    "hasPackageJson": true,
+    "hasTsConfig": true,
+    "hasClaudeConfig": true,
+    "hasClaudeFlow": true
+  },
+  "scannedAt": 1789844587108
+}
