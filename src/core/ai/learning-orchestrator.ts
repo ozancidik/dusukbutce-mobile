@@ -20,6 +20,10 @@ import {
 import { Suggestion } from './suggestions';
 import { ApplyResult } from './auto-apply';
 import { syncLearningState, loadLearningState } from './learning-persistence';
+import {
+  getMultiProjectCoordinator,
+  MultiProjectCoordinator,
+} from './multi-project-coordinator';
 
 export interface LearningInput {
   agentReports: Array<{
@@ -109,6 +113,17 @@ export async function learnFromRun(
     console.log(`✓ Learning state persisted to disk`);
   } catch (error) {
     console.error(`✗ Failed to persist learning state:`, error);
+  }
+
+  // Step 9: Update multi-project coordinator
+  try {
+    const coordinator = getMultiProjectCoordinator();
+    coordinator.updateProjectMetrics('dusukbutce-mobile', state, patterns);
+    coordinator.generateCrossProjectInsights();
+    coordinator.persist();
+    console.log(`✓ Multi-project coordination updated`);
+  } catch (error) {
+    console.error(`✗ Failed to update multi-project coordinator:`, error);
   }
 
   console.log(`\n✅ Learning phase complete`);
