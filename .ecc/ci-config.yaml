@@ -1,0 +1,161 @@
+# CI/CD Integration Configuration for Autonomous Learning System
+
+version: 1
+ci_provider: github-actions
+
+# Orchestration settings
+orchestration:
+  enabled: true
+  async: true
+  timeout_minutes: 15
+  log_level: info
+  trigger_on:
+    - push:main
+    - push:dev
+    - pull_request:main
+    - schedule:daily
+
+# Auto-apply settings
+auto_apply:
+  enabled: true
+  confidence_threshold: 0.7
+  dry_run_first: true
+  auto_commit: false  # Manual review before commit
+  categories:
+    - low_risk:true       # Format fixes, lint auto-fix
+    - medium_risk:false   # Null checks, test mods
+    - high_risk:false     # Security, logic changes
+
+# Performance budgets
+performance_budget:
+  enabled: true
+  checks:
+    - metric: total_execution_time
+      budget_ms: 10000
+      warn_at_ms: 9500
+
+    - metric: agent_execution_time
+      budget_ms: 5000
+      warn_at_ms: 3500
+
+    - metric: memory_usage
+      budget_mb: 512
+      warn_at_mb: 384
+
+# Regression detection
+regression_detection:
+  enabled: true
+  deviation_threshold: 0.20  # 20% deviation = regression
+  severity_levels:
+    low: 20-30%
+    medium: 30-40%
+    high: 40%+
+
+# Safety gates (for main branch)
+safety_gates:
+  enabled: true
+  for_branches:
+    - main
+  rules:
+    - name: minimum_confidence
+      metric: learning_confidence
+      min_value: 0.70
+      blocking: true
+      description: "Learning confidence must be 70%+ for main branch"
+
+    - name: no_high_regressions
+      metric: regression_count_high
+      max_value: 0
+      blocking: true
+      description: "No high-severity regressions allowed"
+
+    - name: agent_health
+      metric: agent_health_percentage
+      min_value: 0.90
+      blocking: false
+      description: "90%+ of agents should be healthy"
+
+# Reporting
+reporting:
+  enabled: true
+  formats:
+    - markdown
+    - json
+  upload_artifacts: true
+  artifact_retention_days: 30
+
+  # PR comments for pull requests
+  pr_comments:
+    enabled: true
+    include_metrics: true
+    include_patterns: true
+    include_recommendations: true
+
+# Notifications
+notifications:
+  enabled: true
+  on_failure: true
+  on_regression: true
+  channels:
+    - type: github_issue
+      enabled: false
+      label: "ai-learning"
+
+    - type: workflow_log
+      enabled: true
+
+# Optimization strategies
+optimizations:
+  agent_ordering:
+    enabled: true
+    apply_automatically: false  # Manual review
+
+  agent_parallelization:
+    enabled: true
+    max_parallel_agents: 3
+
+  agent_skipping:
+    enabled: true
+    min_confidence: 0.90  # Skip agents with 90%+ success
+
+  build_caching:
+    enabled: true
+    cache_key_prefix: "learning-"
+
+# Integration with multi-project
+multi_project:
+  enabled: true
+  coordinate_across_projects: true
+  trigger_cross_project_tests: true
+
+  cross_project_triggers:
+    api_change:
+      enabled: true
+      target_project: dusukbutce-mobile
+      action: integration_tests
+
+    shared_package:
+      enabled: true
+      target_projects: [dusukbutce-web, dusukbutce-mobile]
+      action: security_scan
+
+# Metrics and tracking
+metrics:
+  track_build_time: true
+  track_agent_performance: true
+  track_pattern_detection: true
+  track_optimization_impact: true
+
+  export_to:
+    - type: json
+      path: .ecc/ci-metrics.json
+    - type: prometheus
+      enabled: false
+      endpoint: "http://prometheus:9090"
+
+# Cleanup and maintenance
+cleanup:
+  enabled: true
+  remove_old_reports_days: 90
+  archive_old_metrics_days: 30
+  max_artifact_size_mb: 100

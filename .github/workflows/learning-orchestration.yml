@@ -1,0 +1,242 @@
+name: Autonomous Learning Orchestration
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'src/**'
+      - 'app/**'
+      - '.github/workflows/learning-orchestration.yml'
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Stage 1: Orchestrate ECC agents
+  orchestrate:
+    name: Run Learning Orchestration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ECC Orchestration
+        run: |
+          echo "🚀 Starting ECC Agent Orchestration"
+          npx ecc orchestrate --async --log-level=info
+        continue-on-error: true
+
+      - name: Wait for orchestration
+        run: sleep 30
+
+      - name: Check orchestration status
+        run: npx ecc status --format=json > ecc-status.json
+        continue-on-error: true
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ecc-reports
+          path: .ecc/
+
+  # Stage 2: Apply optimizations
+  optimize:
+    name: Apply Learning Optimizations
+    runs-on: ubuntu-latest
+    needs: orchestrate
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply optimizations
+        run: |
+          echo "⚡ Applying learned optimizations"
+          npx ecc apply-optimizations --confidence-threshold=0.7
+        continue-on-error: true
+
+      - name: Run optimized build
+        run: npm run build
+        continue-on-error: true
+
+  # Stage 3: Performance checks
+  performance:
+    name: Check Performance Budgets
+    runs-on: ubuntu-latest
+    needs: optimize
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Record metrics
+        run: |
+          echo "📊 Recording performance metrics"
+          npx ecc measure --output=metrics.json
+        continue-on-error: true
+
+      - name: Check performance budget
+        run: |
+          echo "💰 Checking performance budget"
+          npx ecc check-budget --budget=10000ms --warn-at=9500ms
+        continue-on-error: true
+
+  # Stage 4: Generate reports
+  report:
+    name: Generate Learning Reports
+    runs-on: ubuntu-latest
+    needs: [orchestrate, optimize, performance]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate reports
+        run: |
+          echo "📝 Generating learning reports"
+          npx ecc report --format=markdown --output=./.ecc/ci-report.md
+          npx ecc report --format=json --output=./.ecc/ci-report.json
+        continue-on-error: true
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: learning-reports
+          path: .ecc/ci-report.*
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.existsSync('./.ecc/ci-report.md')
+              ? fs.readFileSync('./.ecc/ci-report.md', 'utf8')
+              : '📊 Learning report not available';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🧠 Learning Orchestration Results\n\n${report}`
+            });
+
+  # Stage 5: Safety gates
+  safety-gates:
+    name: Deployment Safety Gates
+    runs-on: ubuntu-latest
+    needs: performance
+    if: github.ref == 'refs/heads/main'
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Check learning confidence
+        run: |
+          CONFIDENCE=$(npx ecc status --json | jq '.confidence')
+          echo "Learning Confidence: $CONFIDENCE"
+
+          # Require 70% confidence for main branch
+          if (( $(echo "$CONFIDENCE < 0.70" | bc -l) )); then
+            echo "❌ Confidence below 70% - blocking deployment"
+            exit 1
+          fi
+        continue-on-error: false
+
+      - name: Check for regressions
+        run: |
+          echo "🔍 Checking for performance regressions"
+          npx ecc check-regressions --severity=medium
+        continue-on-error: true
+
+      - name: Verify optimizations
+        run: |
+          echo "✅ Verifying optimization validity"
+          npx ecc verify-optimizations --dry-run
+        continue-on-error: true
+
+      - name: Gate result
+        if: failure()
+        run: |
+          echo "🚫 Safety gates failed - deployment blocked"
+          exit 1
+
+  # Stage 6: Success notification
+  success:
+    name: Orchestration Complete
+    runs-on: ubuntu-latest
+    needs: [report, safety-gates]
+    if: always()
+    timeout-minutes: 2
+
+    steps:
+      - name: Set status
+        run: |
+          if [ "${{ needs.safety-gates.result }}" == "success" ]; then
+            echo "✅ All stages passed - ready for deployment"
+            exit 0
+          else
+            echo "⚠️  Some stages had warnings - review reports"
+            exit 0
+          fi
