@@ -47,3 +47,52 @@ Report: .claude-flow/automation-reports/
 user reviews → PR → merge to main (manual)
 ```
 
+## Autonomous Suggestion Engine (Faz 4b+)
+
+Faz 4b'den itibaren agents'lar otomatik olarak fix suggestions üretiyor ve low-risk fixes'ları otomatik uyguluyor.
+
+**Auto-Apply Kuralları:**
+
+✅ **Auto-Apply (Low-Risk) — Otomatik uygulanır:**
+- Format fixes (prettier, spacing, semicolons)
+- Lint fixes (eslint --fix)
+- Unused import cleanup
+- Type annotation corrections (`Array<T>` → `T[]`)
+- Unused variable removal
+
+⚠️ **Manual Review (Medium-Risk) — Onaya gidiyor:**
+- Null safety checks
+- Test file modifications
+- Configuration changes
+- Dependency version bumps
+
+🔴 **Always Manual (High-Risk) — Her zaman manuel:**
+- Security patches (CVEs)
+- Logic changes
+- Breaking API changes
+- Authentication/authorization logic
+
+**Suggestion Flow:**
+```
+Agents report issues
+  ↓
+Suggestion Engine parses
+  ↓
+Risk classifier (low/medium/high)
+  ├─ Low-Risk → Auto-apply + test
+  ├─ Medium-Risk → Queue for dashboard approval
+  └─ High-Risk → Manual review only
+  ↓
+Dashboard shows pending approvals
+  ↓
+Developer approves/rejects
+  ↓
+Dashboard updates + logs
+```
+
+**Dashboard Komutları:**
+```bash
+npx ecc control-pane --master --port 8765  # Tüm suggestions'ları göster
+npx ecc status --markdown                  # Status özeti
+```
+
