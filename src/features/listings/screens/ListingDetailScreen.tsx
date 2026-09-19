@@ -6,6 +6,7 @@ import { theme } from '../../../core/theme/theme';
 import { listingsRepository } from '../api/listingsRepository';
 import { getCategoryLabel } from '../categories';
 import { getListingTitle } from '../../../shared/models/Listing';
+import { getPriceEstimate, type PerplexityAnswer } from '../../../core/ai/perplexity';
 
 interface Props {
   id: string;
@@ -22,10 +23,31 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 export function ListingDetailScreen({ id }: Props) {
   const [activeImage, setActiveImage] = useState(0);
+  const [priceConsultant, setPriceConsultant] = useState<PerplexityAnswer | null>(null);
+  const [isLoadingPrice, setIsLoadingPrice] = useState(false);
+
   const { data: listing, isLoading, isError } = useQuery({
     queryKey: ['listing', id],
     queryFn: () => listingsRepository.fetchListing(id),
   });
+
+  const handlePriceConsultant = async () => {
+    if (!listing) return;
+    setIsLoadingPrice(true);
+    try {
+      const title = getListingTitle(listing);
+      const result = await getPriceEstimate(title);
+      setPriceConsultant(result);
+    } catch (error) {
+      setPriceConsultant({
+        answer: 'Fiyat danışmanı şu anda kullanılabilir değil.',
+        sources: [],
+        status: 'error',
+      });
+    } finally {
+      setIsLoadingPrice(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -102,6 +124,37 @@ export function ListingDetailScreen({ id }: Props) {
           <Text style={styles.descriptionText}>{listing.listing.description}</Text>
         </View>
       ) : null}
+
+      <Pressable
+        onPress={handlePriceConsultant}
+        disabled={isLoadingPrice}
+        style={[styles.consultantButton, isLoadingPrice && styles.consultantButtonDisabled]}
+      >
+        {isLoadingPrice ? (
+          <ActivityIndicator color={theme.colors.white} size="small" />
+        ) : (
+          <Text style={styles.consultantButtonText}>💰 Fiyat Danışmanı</Text>
+        )}
+      </Pressable>
+
+      {priceConsultant && (
+        <View style={[styles.consultantCard, priceConsultant.status === 'error' && styles.consultantCardError]}>
+          <Text style={styles.consultantTitle}>Pazar Değeri Analizi</Text>
+          <Text style={styles.consultantAnswer}>{priceConsultant.answer}</Text>
+          {priceConsultant.sources && priceConsultant.sources.length > 0 && (
+            <View style={styles.sourcesList}>
+              <Text style={styles.sourcesLabel}>Kaynaklar:</Text>
+              {priceConsultant.sources.map((source, idx) => (
+                source.url && (
+                  <Text key={idx} style={styles.sourceUrl}>
+                    {source.title || source.url}
+                  </Text>
+                )
+              ))}
+            </View>
+          )}
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -163,4 +216,43 @@ const styles = StyleSheet.create({
   },
   descriptionLabel: { color: theme.colors.textMuted, fontSize: 12, marginBottom: 6, fontFamily: theme.fontFamily.medium },
   descriptionText: { color: theme.colors.textSecondary, fontSize: 14, lineHeight: 20, fontFamily: theme.fontFamily.regular },
+  consultantButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radius.card,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.md,
+    alignItems: 'center',
+  },
+  consultantButtonDisabled: { opacity: 0.6 },
+  consultantButtonText: {
+    color: theme.colors.white,
+    fontSize: 16,
+    fontFamily: theme.fontFamily.semiBold,
+  },
+  consultantCard: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.radius.card,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    padding: theme.spacing.md,
+    marginTop: theme.spacing.md,
+  },
+  consultantCardError: { backgroundColor: theme.colors.background },
+  consultantTitle: {
+    fontSize: 14,
+    fontFamily: theme.fontFamily.bold,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.sm,
+  },
+  consultantAnswer: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    lineHeight: 20,
+    fontFamily: theme.fontFamily.regular,
+    marginBottom: theme.spacing.sm,
+  },
+  sourcesList: { marginTop: theme.spacing.md, borderTopWidth: 1, borderTopColor: theme.colors.border, paddingTop: theme.spacing.sm },
+  sourcesLabel: { fontSize: 12, fontFamily: theme.fontFamily.medium, color: theme.colors.textMuted, marginBottom: 4 },
+  sourceUrl: { fontSize: 12, color: theme.colors.primary, fontFamily: theme.fontFamily.regular, marginVertical: 2 },
 });

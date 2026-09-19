@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { theme } from '../../../core/theme/theme';
 import { AppTextInput } from '../../../shared/widgets/AppTextInput';
@@ -10,6 +10,7 @@ import { PillSelectField } from '../components/PillSelectField';
 import { APPOINTMENT_TIME_SLOTS, SHIPPING_METHOD_OPTIONS } from '../data/technicalServiceOptions';
 import { DeliveryMethod, technicalServiceRepository } from '../api/technicalServiceRepository';
 import { ApiException } from '../../../core/network/apiException';
+import { getRepairEstimate, type PerplexityAnswer } from '../../../core/ai/perplexity';
 
 interface Props {
   serviceType: string;
@@ -36,9 +37,31 @@ export function TechnicalServiceFormScreen({ serviceType, deliveryMethod }: Prop
   const [districtPickerOpen, setDistrictPickerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{ submissionId: string } | null>(null);
+  const [repairEstimate, setRepairEstimate] = useState<PerplexityAnswer | null>(null);
+  const [isLoadingEstimate, setIsLoadingEstimate] = useState(false);
 
   const districtOptions = city ? TURKEY_PROVINCES[city] ?? [] : [];
   const isEvimdenAl = deliveryMethod === 'evimden-al';
+
+  const handleRepairEstimate = async () => {
+    if (!deviceInfo.trim() || !problemDescription.trim()) {
+      Alert.alert('Bilgi eksik', 'Cihaz bilgisi ve sorun açıklaması gereklidir.');
+      return;
+    }
+    setIsLoadingEstimate(true);
+    try {
+      const result = await getRepairEstimate(deviceInfo, problemDescription);
+      setRepairEstimate(result);
+    } catch (error) {
+      setRepairEstimate({
+        answer: 'Tamir maliyeti tahmini şu anda kullanılabilir değil.',
+        sources: [],
+        status: 'error',
+      });
+    } finally {
+      setIsLoadingEstimate(false);
+    }
+  };
 
   const onSubmit = async () => {
     if (
@@ -147,6 +170,40 @@ export function TechnicalServiceFormScreen({ serviceType, deliveryMethod }: Prop
         multiline
         style={styles.textarea}
       />
+
+      {deviceInfo && problemDescription && (
+        <Pressable
+          onPress={handleRepairEstimate}
+          disabled={isLoadingEstimate}
+          style={[styles.estimateButton, isLoadingEstimate && styles.estimateButtonDisabled]}
+        >
+          {isLoadingEstimate ? (
+            <ActivityIndicator color={theme.colors.white} size="small" />
+          ) : (
+            <Text style={styles.estimateButtonText}>🔧 Tamir Maliyeti Tahminle</Text>
+          )}
+        </Pressable>
+      )}
+
+      {repairEstimate && (
+        <View style={[styles.estimateCard, repairEstimate.status === 'error' && styles.estimateCardError]}>
+          <Text style={styles.estimateTitle}>Tamir Maliyeti Tahmini</Text>
+          <Text style={styles.estimateAnswer}>{repairEstimate.answer}</Text>
+          {repairEstimate.sources && repairEstimate.sources.length > 0 && (
+            <View style={styles.sourcesList}>
+              <Text style={styles.sourcesLabel}>Referanslar:</Text>
+              {repairEstimate.sources.map((source, idx) => (
+                source.url && (
+                  <Text key={idx} style={styles.sourceUrl}>
+                    {source.title || source.url}
+                  </Text>
+                )
+              ))}
+            </View>
+          )}
+        </View>
+      )}
+
       <AppTextInput label="Notlar (opsiyonel)" value={notes} onChangeText={setNotes} multiline style={styles.textareaSmall} />
 
       {isEvimdenAl ? (
@@ -215,4 +272,43 @@ const styles = StyleSheet.create({
   successTitle: { fontSize: 22, fontFamily: theme.fontFamily.bold, color: theme.colors.textPrimary },
   successBody: { fontSize: 14, color: theme.colors.textMuted, textAlign: 'center', fontFamily: theme.fontFamily.regular },
   successRef: { fontSize: 12, color: theme.colors.textMuted, fontFamily: theme.fontFamily.regular, marginBottom: theme.spacing.lg },
+  estimateButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radius.control,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+    alignItems: 'center',
+  },
+  estimateButtonDisabled: { opacity: 0.6 },
+  estimateButtonText: {
+    color: theme.colors.white,
+    fontSize: 14,
+    fontFamily: theme.fontFamily.semiBold,
+  },
+  estimateCard: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.radius.card,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+  },
+  estimateCardError: { backgroundColor: theme.colors.background },
+  estimateTitle: {
+    fontSize: 14,
+    fontFamily: theme.fontFamily.bold,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.sm,
+  },
+  estimateAnswer: {
+    fontSize: 13,
+    color: theme.colors.textSecondary,
+    lineHeight: 18,
+    fontFamily: theme.fontFamily.regular,
+    marginBottom: theme.spacing.sm,
+  },
+  sourcesList: { marginTop: theme.spacing.sm, borderTopWidth: 1, borderTopColor: theme.colors.border, paddingTop: theme.spacing.sm },
+  sourcesLabel: { fontSize: 11, fontFamily: theme.fontFamily.medium, color: theme.colors.textMuted, marginBottom: 4 },
+  sourceUrl: { fontSize: 11, color: theme.colors.primary, fontFamily: theme.fontFamily.regular, marginVertical: 2 },
 });
