@@ -1,0 +1,213 @@
+# Multi-Project Coordination Configuration
+# Defines cross-project triggers, dependencies, and unified learning rules
+
+version: 1
+created: "2026-09-19"
+
+# Registered projects
+projects:
+  - name: dusukbutce-web
+    path: "~/Desktop/dusukbutce-web"
+    type: web
+    description: "Next.js backend - API, authentication, data models"
+    confidence_target: 0.85
+
+  - name: dusukbutce-mobile
+    path: "~/Desktop/dusukbutce-mobile"
+    type: mobile
+    description: "React Native mobile client - Expo, screens, features"
+    confidence_target: 0.80
+
+# Dependencies between projects
+dependencies:
+  - source: dusukbutce-web
+    target: dusukbutce-mobile
+    type: api
+    description: "Mobile consumes web API endpoints"
+    trigger_on_change: true
+
+  - source: dusukbutce-web
+    target: dusukbutce-mobile
+    type: library
+    description: "Shared npm packages (date, currency, validation)"
+    trigger_on_change: true
+
+  - source: dusukbutce-mobile
+    target: dusukbutce-web
+    type: test
+    description: "Mobile integration tests verify web API contracts"
+    trigger_on_change: false
+
+# Cross-project triggers
+cross_project_triggers:
+  # Trigger 1: API changes → Mobile tests
+  - id: api-change-mobile-test
+    name: "API Change → Mobile Integration Test"
+    source:
+      project: dusukbutce-web
+      event: "api-change"
+      condition: "agent:code-quality.success AND file:app/api/**"
+    target:
+      project: dusukbutce-mobile
+      action: "mobile-qa:run-integration-tests"
+    reason: "API contracts changed, verify mobile compatibility"
+    priority: "high"
+    enabled: true
+
+  # Trigger 2: Shared package update → Both projects
+  - id: shared-package-update
+    name: "Shared Package Update → Both Projects"
+    source:
+      project: dusukbutce-web
+      event: "dependency-update"
+      condition: "file:package.json AND package:shared-*"
+    target:
+      project: [dusukbutce-web, dusukbutce-mobile]
+      action: "run-security-scanner"
+    reason: "Shared dependency changed, verify security across both"
+    priority: "high"
+    enabled: true
+
+  # Trigger 3: Type changes → Verify both
+  - id: type-change-verification
+    name: "Type Definition Change → Verification"
+    source:
+      project: dusukbutce-web
+      event: "type-change"
+      condition: "file:types/** OR file:app/api/**/route.ts"
+    target:
+      project: dusukbutce-mobile
+      action: "verify-api-types"
+    reason: "API types changed, verify mobile request/response matching"
+    priority: "medium"
+    enabled: true
+
+  # Trigger 4: Security vulnerability → Both
+  - id: security-vulnerability
+    name: "Security Vulnerability → Both Projects"
+    source:
+      project: [dusukbutce-web, dusukbutce-mobile]
+      event: "security-scan:found-vulnerability"
+      condition: "severity:high OR severity:critical"
+    target:
+      project: [dusukbutce-web, dusukbutce-mobile]
+      action: "escalate-to-manual-review"
+    reason: "High-severity vulnerability found, immediate action"
+    priority: "critical"
+    enabled: true
+
+# Unified learning rules
+unified_learning:
+  # Aggregate metrics across projects
+  aggregation:
+    enabled: true
+    update_frequency: "after-each-run"
+    metrics_to_aggregate:
+      - "agent_success_rate"
+      - "execution_time"
+      - "pattern_frequency"
+      - "file_risk_scores"
+
+  # Shared pattern detection
+  shared_patterns:
+    enabled: true
+    min_projects_affected: 2
+    confidence_threshold: 0.75
+    patterns_to_watch:
+      - "unused-imports"
+      - "type-mismatches"
+      - "null-safety"
+      - "security-vulnerabilities"
+
+  # Cross-project insights
+  insights:
+    enabled: true
+    types:
+      - pattern_sharing
+      - confidence_disparity
+      - high_risk_files
+      - dependency_issues
+
+  # Unified confidence calculation
+  confidence_calculation:
+    method: "weighted-average"
+    weights:
+      - project: dusukbutce-web
+        weight: 0.6
+      - project: dusukbutce-mobile
+        weight: 0.4
+    factors:
+      - "project_confidence": 0.4
+      - "shared_patterns": 0.3
+      - "dependency_health": 0.2
+      - "run_count": 0.1
+
+# Storage and persistence
+storage:
+  base_dir: "~/.ecc/multi-project"
+  coordination_file: "coordination.json"
+  backup_frequency: "after-each-sync"
+  retention_days: 30
+
+# Alerts and notifications
+alerts:
+  enabled: true
+  channels:
+    - type: console
+      level: warning
+
+  rules:
+    - event: "cross-project-trigger-executed"
+      level: info
+
+    - event: "shared-pattern-detected"
+      level: warning
+
+    - event: "confidence-disparity-high"
+      level: warning
+      threshold: 0.3
+
+    - event: "dependency-health-degraded"
+      level: error
+
+    - event: "security-vulnerability-found"
+      level: critical
+
+# Optimization strategies
+optimizations:
+  # Parallelize projects when independent
+  parallelization:
+    enabled: true
+    strategy: "run-independent-projects-parallel"
+    max_parallel: 2
+
+  # Skip agents based on shared patterns
+  agent_skipping:
+    enabled: true
+    rules:
+      - if: "shared_pattern_not_found_in_project"
+        then: "skip_agent_in_that_project"
+        example: "If unused-imports not detected in web, skip linter in web"
+
+  # Estimate cross-project time
+  time_estimation:
+    enabled: true
+    baseline_sequential: 18500  # ms
+    with_parallelization: 10000  # ms
+    savings_percent: 46
+
+# Reporting
+reporting:
+  enabled: true
+  formats:
+    - markdown
+    - json
+    - html
+  schedule: "after-each-cross-project-sync"
+  sections:
+    - project_status
+    - dependencies
+    - shared_patterns
+    - cross_project_insights
+    - unified_metrics
+    - recommendations
