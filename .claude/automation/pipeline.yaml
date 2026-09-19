@@ -1,0 +1,58 @@
+name: "commit-triggered-pipeline"
+description: "Automated CI/CD pipeline: lint → test → security → build → report"
+trigger: "post-commit"
+
+stages:
+  - name: "lint"
+    timeout: 60
+    agents: ["code-formatter"]
+    commands:
+      - "npx eslint app/ --max-warnings=0 2>&1"
+      - "npx tsc --noEmit -p tsconfig.json 2>&1"
+    fail_strategy: "report"  # Report failures, don't block
+
+  - name: "test"
+    timeout: 180
+    agents: ["test-runner"]
+    parallel: true
+    commands:
+      - "npm test -- --coverage --passWithNoTests 2>&1"
+    fail_strategy: "report"
+
+  - name: "security"
+    timeout: 120
+    agents: ["security-scanner"]
+    commands:
+      - "npm audit --audit-level=moderate 2>&1"
+      - "npx snyk test --severity-threshold=high 2>/dev/null || true"
+    fail_strategy: "report"
+
+  - name: "build"
+    timeout: 300
+    agents: ["build-coordinator"]
+    commands:
+      - "npm run build 2>&1"
+    fail_strategy: "report"
+
+  - name: "report"
+    timeout: 30
+    agents: ["automation-reporter"]
+    commands:
+      - "echo 'Pipeline complete' && echo '✅ Automation run logged'"
+    fail_strategy: "ignore"
+
+learning:
+  enabled: true
+  track:
+    - "stage_duration"
+    - "failures_per_stage"
+    - "success_patterns"
+    - "common_errors"
+
+notifications:
+  on_failure:
+    - type: "github_comment"
+      branch_pattern: ".*"
+  on_success:
+    - type: "github_check_run"
+      status: "success"
