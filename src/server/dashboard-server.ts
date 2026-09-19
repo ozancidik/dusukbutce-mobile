@@ -16,6 +16,7 @@ import {
   generateDashboardMarkdown,
 } from '../core/ai/dashboard-widgets';
 import { getMultiProjectCoordinator } from '../core/ai/multi-project-coordinator';
+import { getPerformanceMonitor } from '../core/ai/performance-monitor';
 
 /**
  * Dashboard server configuration
@@ -291,12 +292,36 @@ export class CloudDashboardServer {
       res.json({ success: true, timestamp: new Date().toISOString() });
     });
 
+    // API: Get performance metrics
+    this.app.get('/api/performance', (req, res) => {
+      const monitor = getPerformanceMonitor();
+      const summary = monitor.getSummary();
+
+      res.json({
+        summary,
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    // API: Get performance report
+    this.app.get('/api/performance/report', (req, res) => {
+      const period = (req.query.period as string) || 'last_1h';
+      const monitor = getPerformanceMonitor();
+      const report = monitor.generateReport(period as any);
+
+      res.json(report);
+    });
+
     // Health check
     this.app.get('/health', (req, res) => {
+      const monitor = getPerformanceMonitor();
+      const perfSummary = monitor.getSummary();
+
       res.json({
         status: 'healthy',
         uptime: process.uptime(),
         clients: this.wss.clients.size,
+        performance: perfSummary.status,
         timestamp: new Date().toISOString(),
       });
     });
