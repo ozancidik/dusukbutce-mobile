@@ -1,0 +1,223 @@
+# ECC Agent Routing Configuration
+# Otomatik agent orchestration & intelligent routing
+
+version: "2.0"
+name: "dusukbutce-mobile-automation"
+
+# Global settings
+global:
+  mode: "autonomous"  # Auto-trigger agents based on events
+  parallel_execution: true
+  max_concurrent_agents: 4
+  timeout_per_agent: 300s  # 5 min
+  learning_enabled: true
+
+# Event sources
+event_sources:
+  - type: "git"
+    events:
+      - "commit"
+      - "push"
+      - "file_change"
+
+  - type: "user_action"
+    events:
+      - "screen_load"
+      - "button_click"
+
+  - type: "api_response"
+    events:
+      - "perplexity_response"
+      - "api_error"
+
+# Agent definitions & triggers
+agents:
+  # Perplexity Validator
+  perplexity-validator:
+    enabled: true
+    triggers:
+      - event: "file_change"
+        pattern: "src/core/ai/perplexity.ts"
+      - event: "commit"
+        message: "*perplexity*"
+    actions:
+      - "validate-api-integration"
+      - "test-api-responses"
+      - "check-rate-limits"
+    dependencies: []
+    timeout: 120s
+    retry_on_failure: true
+    max_retries: 3
+
+  # Humanizer (Text Polish)
+  humanizer:
+    enabled: true
+    triggers:
+      - event: "perplexity_response"
+      - event: "system_message"
+    actions:
+      - "humanize-text"
+      - "validate-tone"
+      - "quality-check"
+    dependencies:
+      - "perplexity-validator"  # Run after Perplexity
+    timeout: 60s
+    skill: "/humanizer"
+    auto_apply: true
+
+  # Linter & Type Checker
+  code-quality:
+    enabled: true
+    triggers:
+      - event: "file_change"
+        pattern: "src/**/*.{ts,tsx}"
+      - event: "commit"
+    actions:
+      - "eslint"
+      - "typescript-check"
+      - "prettier-format"
+    dependencies: []
+    timeout: 180s
+    parallel_with: ["mobile-qa"]
+    auto_fix: true
+
+  # Mobile QA
+  mobile-qa:
+    enabled: true
+    triggers:
+      - event: "file_change"
+        pattern: "src/features/**"
+      - event: "commit"
+        message: "*feature*"
+    actions:
+      - "unit-tests"
+      - "smoke-tests"
+      - "accessibility-check"
+    dependencies:
+      - "code-quality"
+    timeout: 240s
+    parallel_with: ["code-quality"]
+
+  # Security Scanner
+  security-scanner:
+    enabled: true
+    triggers:
+      - event: "file_change"
+        pattern: "src/core/**"
+      - event: "commit"
+        message: "*security*"
+      - event: "daily"  # Daily scan
+        time: "02:00"   # 2 AM
+    actions:
+      - "dependency-audit"
+      - "secret-scan"
+      - "vulnerability-check"
+    dependencies: []
+    timeout: 300s
+
+  # Playwright (Browser Tests)
+  playwright-tester:
+    enabled: true
+    triggers:
+      - event: "commit"
+        branch: "main"
+      - event: "push"
+        branch: "main"
+    actions:
+      - "smoke-tests"
+      - "e2e-tests"
+      - "performance-tests"
+    dependencies:
+      - "code-quality"
+      - "mobile-qa"
+    timeout: 600s
+    environment: "staging"
+
+  # Build Optimizer
+  build-optimizer:
+    enabled: true
+    triggers:
+      - event: "commit"
+      - event: "file_change"
+        pattern: "package.json|tsconfig.json|app.json"
+    actions:
+      - "bundle-size-check"
+      - "performance-audit"
+      - "optimize-assets"
+    dependencies:
+      - "code-quality"
+    timeout: 300s
+    auto_fix: true
+
+# Decision tree: Which agents run based on context
+decision_engine:
+  rules:
+    - condition: "file_contains('src/core/ai') && commit"
+      agents: ["perplexity-validator", "humanizer", "security-scanner"]
+
+    - condition: "file_contains('src/features') && commit"
+      agents: ["code-quality", "mobile-qa"]
+
+    - condition: "file_contains('package.json') && commit"
+      agents: ["security-scanner", "build-optimizer"]
+
+    - condition: "event == 'perplexity_response'"
+      agents: ["humanizer"]
+
+    - condition: "branch == 'main' && commit"
+      agents: ["code-quality", "mobile-qa", "security-scanner", "playwright-tester", "build-optimizer"]
+
+    - condition: "commit.message contains 'URGENT'"
+      agents: ["security-scanner", "code-quality"]  # Priority
+      priority: "high"
+
+# Reporting & dashboarding
+reporting:
+  enabled: true
+  outputs:
+    - type: "markdown"
+      path: ".claude-flow/automation-reports/{timestamp}-{branch}.md"
+
+    - type: "json"
+      path: ".claude-flow/metrics/{timestamp}-metrics.json"
+
+    - type: "dashboard"
+      url: "http://localhost:8765"  # ECC control-pane
+
+  include_metrics:
+    - "execution_time"
+    - "success_rate"
+    - "agent_decisions"
+    - "learning_insights"
+
+# Learning system: Optimize future runs
+learning:
+  enabled: true
+  track:
+    - "agent_duration_per_file_type"
+    - "common_failure_patterns"
+    - "optimal_agent_order"
+    - "false_positive_rate"
+
+  optimize:
+    - "Skip agents if recent successful run"
+    - "Parallel agents if no dependencies"
+    - "Increase timeout on repeated failures"
+    - "Suggest better triggers based on history"
+
+  storage: ".ecc/learning-metrics.db"  # SQLite
+
+# Fallback & error handling
+error_handling:
+  on_agent_timeout: "skip_dependent"  # Skip agents waiting on it
+  on_agent_failure: "report_and_continue"
+  on_critical_failure: "notify_and_stop"
+
+  notifications:
+    - channel: "stdout"
+      level: "error"
+    - channel: "report"
+      level: "all"
+
+# Dry-run mode for testing
+dry_run: false  # Set to true to preview without executing

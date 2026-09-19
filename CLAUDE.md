@@ -15,8 +15,35 @@ Mimari kısa özet (ayrıntı için `.claude/agents/mobil-frontend.md`): `expo-r
 Bu proje zaman zaman kullanıcı PC başında değilken çalıştırılıyor. Hangi agent/oturum olursa olsun şu kurallar geçerli:
 
 - **`main`'e asla doğrudan commit/push yapma.** Her göreve kendi feature branch'inde başla (`git checkout -b <kısa-açıklayıcı-isim>`), orada commit'le. Kullanıcı dönünce gözden geçirip kendisi merge eder.
+  - **Exception: Autonomous Orchestration Mode** — Feature branch'lerde ECC agents otomatik çalışabilir (`ecc orchestrate --async`). Main'e push yapmadan önce MUTLAKA manual review.
 - **Kapsam disiplini.** Verilen görevle sınırlı kal. Görev dışı bir sorun/iyileştirme fark edersen kod değiştirmeden rapora not düş — "bu arada şunu da hallettim" yapma, kullanıcı dönünce neyin neden değiştiğini takip edemez hale gelir.
 - **Her görev sonunda rapor bırak.** `.claude/reports/<tarih>-<konu>.md` — ne yapıldı, hangi dosyalar değişti, tip/lint durumu, test edilebildiyse sonucu, test edilemediyse neden.
 - **Dur koşulları.** Aynı hatada/aynı build sorununda 3 denemeden fazla üst üste takılırsan durup rapora net şekilde ne olduğunu yaz; aynı şeyi tekrar tekrar deneyerek token/zaman tüketme.
 - **Test verisi temizliği.** Local dev ortamı prod veritabanını kullanır (aynı MongoDB). Test için oluşturulan her hesap/kayıt (`qa-*@example.com` deseninde) iş bitince mutlaka silinir.
+
+## Autonomous Orchestration Mode (Faz 2B+)
+
+Faz 2B'den itibaren ECC-based otomatik agent routing aktif. 
+
+**Kural:**
+- Feature branch'te: `post-commit` hook → ECC agents auto-trigger (paralel, intelligent routing)
+- Main branch'te: Hook disabled, manual review → `git push` gerçekleşmez agents tarafından
+- `.ecc/agent-routing.yaml`: Hangi agent, ne zaman, neden çalıştırılacak tanımlanır
+
+**Workflow:**
+```
+git commit (feature branch)
+  ↓
+post-commit-hook triggers
+  ↓
+ECC analyzes changes
+  ↓
+Smart routing: Hangi agents? (Parallel?)
+  ↓
+Agents execute autonomously
+  ↓
+Report: .claude-flow/automation-reports/
+  ↓
+user reviews → PR → merge to main (manual)
+```
 
