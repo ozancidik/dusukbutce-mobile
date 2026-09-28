@@ -26,6 +26,8 @@ Doğrulama: `tsc` uygulama kodunda 0 hata; ESLint 0 sorun. Geçici jest testiyle
 
 9. **Bölüm 3 kalan alanlar ve form hataları (web `70f03c6` ile hizalı):** notebook (şarj adaptörü, klavye düzeni, bilinen arıza), masaüstü (bilinen arıza; disk tipi `SSD(NVMe)` biçimi), işlemci (overclock), RAM (kit), monitör (aksesuar; çözünürlük/yenileme/panel seçici), klavye (eksik tuş), kulaklık (tip, mikrofon, ped, şarj kutusu), soğutucu (pompa; tip seçenekleri), kasa (yan panel, fan; güç kaynağı Var/Yok + watt), PlayStation (jailbreak, firmware), PS/Xbox/gamepad **Kullanım Durumu (web'de zorunlu)**, gamepad pil, tablet (aksesuar, ekran, ölü piksel; depolama seçici), ses sistemi (tip, kumanda/kablo), yazıcı/fotokopi (toner; ADF), tarayıcı (ADF, kullanım; Türkçe tip değerleri), SSD (`type` form faktörü, `interface` serbest metin), mouse (bağlantı seçenekleri), telefon (RAM opsiyonel, ekran boyutu çıkarıldı).
 
+10. **Yazıcı/fotokopi ayrıştırması (web `1e3fd28`):** yazıcı `type` yalnızca teknoloji + `multifunction`/`paperSize`/`usageType`; fotokopi `type` → `printColor` (Renk Modu) + aynı üç alan.
+
 Değişmezlik kontrolü (elle çalıştırıldı): mobile config'teki tüm `key` değerleri web `lib/handleProductSubmission.ts` `ALLOWED_FIELDS` içinde; kategori içinde çift anahtar yok. **Önemli:** mobile bu alanları göndermeden önce web dalı (`feat/bize-sat-alan-temizligi`) prod'a çıkmalı; o zamana kadar yeni alanlar sunucuda sessizce atılır (gönderim hata vermez).
 
 ## Bilinçli olarak YAPILMAYANLAR (kapsam / onay)
