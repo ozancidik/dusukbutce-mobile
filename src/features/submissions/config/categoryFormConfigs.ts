@@ -18,10 +18,16 @@ export interface CategoryFormConfig {
   // ({message:"Success", id, submissionNumber}); notebook-submissions farklı
   // bir response döndürüyor ({success:true, id, submissionNumber}).
   responseShape: 'standard' | 'notebook';
+  // Doluysa formda "Marka" sorulmaz, bu değer gönderilir (web'de PlayStation/Xbox
+  // sayfaları da markayı sabit gönderiyor). Ayrıca extraFields içinde `key: 'model'`
+  // olan kategorilerde ortak "Model" kutusu gösterilmez; o alan kullanılır.
+  fixedBrand?: string;
   extraFields: FieldConfig[];
 }
 
-const COSMETIC_CONDITIONS = ['Sıfır Gibi', 'Az Kullanılmış', 'İyi', 'Yıpranmış'];
+// Web'deki bize-sat formlarının ortak seçenekleriyle birebir aynı (19-21 sayfa);
+// admin paneli ve teklif akışı bu değerlere göre çalışıyor.
+const COSMETIC_CONDITIONS = ['Mükemmel', 'İyi', 'Orta', 'Kötü'];
 
 export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
   {
@@ -235,6 +241,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     icon: '🎮',
     endpoint: '/api/submissions',
     responseShape: 'standard',
+    fixedBrand: 'Sony',
     extraFields: [
       { key: 'model', label: 'PlayStation Modeli', type: 'select', options: ['PS5', 'PS5 Digital', 'PS4 Pro', 'PS4', 'PS4 Slim'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['500GB', '825GB', '1TB', '2TB'] },
@@ -262,6 +269,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     icon: '🎮',
     endpoint: '/api/submissions',
     responseShape: 'standard',
+    fixedBrand: 'Microsoft',
     extraFields: [
       { key: 'model', label: 'Xbox Modeli', type: 'select', options: ['Xbox Series X', 'Xbox Series S', 'Xbox One X', 'Xbox One S', 'Xbox One'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['512GB', '1TB', '2TB'] },

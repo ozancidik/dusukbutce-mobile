@@ -15,12 +15,15 @@ Dal: `fix/mobile-web-api-senkron` (main'den açıldı).
 
 Doğrulama: `tsc` — `app/`, `src/features`, `src/core/network`, `src/shared` altında 0 hata. ESLint — değişen 2 dosyada 0 sorun. Cihazda/simülatörde çalıştırılmadı.
 
+4. **Kozmetik durum sözlüğü web ile hizalandı:** `Mükemmel / İyi / Orta / Kötü` (web bize-sat sayfalarının 19-21'inde ortak; `Çok İyi` yalnızca 3 sayfada, şemada enum yok). Eski mobile değerleri (`Sıfır Gibi`, `Az Kullanılmış`, `Yıpranmış`) admin tarafında tanınmıyordu.
+5. **`required: true` extra alanlar artık istemcide zorlanıyor.** Eksikler tek uyarıda listeleniyor; zorunlu alan etiketlerine `*` eklendi (Marka/Model/Kozmetik Durum dahil). Mantık saf fonksiyona çıkarıldı: `src/features/submissions/validation.ts` (`getMissingFields`).
+6. **PlayStation/Xbox çift "Model" sorunu çözüldü:** config'e `fixedBrand` eklendi (PlayStation `Sony`, Xbox `Microsoft`); kendi `model` select'i olan kategorilerde ortak Marka/Model kutuları gizleniyor ve model o select'ten gönderiliyor. Web'de PlayStation `brand: 'Sony'`, Xbox `brand: 'xbox'` gönderiyor; Xbox'ta küçük harfli `xbox` yerine `Microsoft` seçtim (web ile tek fark, admin listesinde marka görünümü).
+
+Doğrulama: `tsc` uygulama kodunda 0 hata; ESLint 0 sorun. Geçici jest testiyle 6 durum doğrulandı (id benzersizliği/hizası, sound-system yok, kozmetik liste, telefon zorunlu alanları, PlayStation marka+model, boşluk-only değerler); test dosyası commit'lenmedi çünkü jest ayarı ve `@types/jest` yalnızca commit'lenmemiş `package.json`'da. Cihazda/simülatörde çalıştırılmadı.
+
 ## Bilinçli olarak YAPILMAYANLAR (kapsam / onay)
 
-- **Kozmetik durum sözlüğü uyuşmuyor:** mobile `Sıfır Gibi / Az Kullanılmış / İyi / Yıpranmış`, web `Mükemmel / İyi / Orta / Kötü`. Web'deki tam liste tüm sayfalardan doğrulanmadan değiştirilmedi.
-- **`required: true` extra alanlar istemcide zorlanmıyor** (telefon: storage/ram/registrationType; desktop; playstation/xbox model; fotokopi/yazıcı/tarayıcı type).
-- **PlayStation/Xbox'ta çift "Model" alanı:** ortak Model text alanı + ekstra `model` select; `...extraValues` ortak değeri eziyor.
-- **ALLOWED_FIELDS dışı alanlar sessizce atılıyor:** `color`, `controllers`, `games`, `connectionType`, `printSpeed`, `copySpeed`, `scanSpeed`. Web `compatibility` alanı gaming-wheel'de mobile'da yok. Web rapor bölüm 2 kararlarıyla birlikte ele alınmalı.
+- **ALLOWED_FIELDS dışı alanlar sessizce atılıyor:** `color`, `controllers`, `games`, `connectionType`, `printSpeed`, `copySpeed`, `scanSpeed`. Web `compatibility` alanı gaming-wheel'de mobile'da yok. Web rapor bölüm 2 kararlarıyla birlikte ele alınmalı (bir sonraki adım).
 - Web'de bazı yetim/ölü sayfalar Türkçe id (`kasa`, `islemci`, `sogutucu`…) ve `steering-wheel` kullanıyor; mobile bunlarla eşleşmiyor ve eşleşmesi gerekmiyor (canlı akış İngilizce id'li sayfalar).
 
 ## Sağlık taraması (kapsam dışı, düzeltilmedi)
