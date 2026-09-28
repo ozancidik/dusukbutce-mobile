@@ -176,17 +176,6 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     ],
   },
   {
-    id: 'sound-system',
-    name: 'Hoparlör',
-    icon: '📢',
-    endpoint: '/api/sound-system-submissions',
-    responseShape: 'standard',
-    extraFields: [
-      { key: 'power', label: 'Güç', type: 'text' },
-      { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz', 'Bluetooth'] },
-    ],
-  },
-  {
     id: 'gaming-wheel',
     name: 'Direksiyon Seti',
     icon: '🏎️',
@@ -196,13 +185,17 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
   },
   // Aşağıdaki 8 kategoride web'de dedicated bir `/api/xxx-submissions` route'u
   // yok, hepsi genel `/api/submissions` uç noktasına (handleProductSubmission)
-  // gönderiyor. Bazı alanlar (color, controllers, games, registrationType,
-  // connectionType, printSpeed, copySpeed, scanSpeed) backend'in ALLOWED_FIELDS
-  // whitelist'inde (lib/handleProductSubmission.ts) yok — web'in kendisi de bu
-  // alanları sessizce kaydetmiyor, bu RN entegrasyonunun hatası değil. Web ile
-  // görsel/işlevsel tutarlılık için yine de formda gösteriyoruz.
+  // gönderiyor. Bazı alanlar (color, controllers, games, connectionType,
+  // printSpeed, copySpeed, scanSpeed) backend'in ALLOWED_FIELDS whitelist'inde
+  // (lib/handleProductSubmission.ts) yok — sessizce kaydedilmiyor. (registrationType
+  // web'de artık whitelist'te ve şemada.) Web ile görsel tutarlılık için yine de
+  // formda gösteriyoruz.
+  //
+  // Bu kategorilerin `id` değeri sunucuya `category` olarak gider ve admin
+  // panelindeki kategori filtresi/etiketleri web'in kullandığı değerlerle
+  // eşleşmek zorundadır (cep-telefonu, fotokopi-makinesi, yazici, tarayici).
   {
-    id: 'phone',
+    id: 'cep-telefonu',
     name: 'Cep Telefonu',
     icon: '📱',
     endpoint: '/api/submissions',
@@ -279,7 +272,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     ],
   },
   {
-    id: 'photocopier',
+    id: 'fotokopi-makinesi',
     name: 'Fotokopi Makinesi',
     icon: '📄',
     endpoint: '/api/submissions',
@@ -299,7 +292,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     ],
   },
   {
-    id: 'printer',
+    id: 'yazici',
     name: 'Yazıcı',
     icon: '🖨️',
     endpoint: '/api/submissions',
@@ -319,7 +312,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     ],
   },
   {
-    id: 'scanner',
+    id: 'tarayici',
     name: 'Tarayıcı',
     icon: '🔍',
     endpoint: '/api/submissions',
