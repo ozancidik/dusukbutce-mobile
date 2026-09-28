@@ -187,15 +187,22 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     icon: '🏎️',
     endpoint: '/api/gaming-wheel-submissions',
     responseShape: 'standard',
-    extraFields: [{ key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz'] }],
+    extraFields: [
+      { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz'] },
+      {
+        key: 'compatibility',
+        label: 'Uyumluluk',
+        type: 'select',
+        options: ['Bilgisayar', 'Playstation', 'Xbox', 'Bilgisayar+Playstation', 'Bilgisayar+Xbox'],
+        required: true,
+      },
+    ],
   },
   // Aşağıdaki 8 kategoride web'de dedicated bir `/api/xxx-submissions` route'u
   // yok, hepsi genel `/api/submissions` uç noktasına (handleProductSubmission)
-  // gönderiyor. Bazı alanlar (color, controllers, games, connectionType,
-  // printSpeed, copySpeed, scanSpeed) backend'in ALLOWED_FIELDS whitelist'inde
-  // (lib/handleProductSubmission.ts) yok — sessizce kaydedilmiyor. (registrationType
-  // web'de artık whitelist'te ve şemada.) Web ile görsel tutarlılık için yine de
-  // formda gösteriyoruz.
+  // gönderiyor. Buradaki alan anahtarları backend'in ALLOWED_FIELDS whitelist'iyle
+  // (lib/handleProductSubmission.ts) BİREBİR aynı olmalı; whitelist'te olmayan
+  // anahtar sessizce atılır. Yeni alan eklerken önce web'de ALLOWED_FIELDS + şema.
   //
   // Bu kategorilerin `id` değeri sunucuya `category` olarak gider ve admin
   // panelindeki kategori filtresi/etiketleri web'in kullandığı değerlerle
@@ -211,7 +218,6 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'ram', label: 'RAM', type: 'select', options: ['2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '16GB'], required: true },
       { key: 'batteryHealth', label: 'Batarya Sağlığı (%)', type: 'text', keyboardType: 'numeric' },
       { key: 'screenSize', label: 'Ekran Boyutu (inç)', type: 'text' },
-      { key: 'color', label: 'Renk', type: 'text' },
       { key: 'registrationType', label: 'Kayıt Türü', type: 'select', options: ['Yurtiçi', 'Yurtdışı'], required: true },
     ],
   },
@@ -245,9 +251,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'model', label: 'PlayStation Modeli', type: 'select', options: ['PS5', 'PS5 Digital', 'PS4 Pro', 'PS4', 'PS4 Slim'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['500GB', '825GB', '1TB', '2TB'] },
-      { key: 'color', label: 'Renk', type: 'text' },
       { key: 'controllers', label: 'Kol Sayısı', type: 'text', keyboardType: 'numeric' },
-      { key: 'games', label: 'Oyunlar', type: 'text' },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
     ],
   },
@@ -259,7 +263,6 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'condition', label: 'Durum', type: 'text' },
-      { key: 'color', label: 'Renk', type: 'text' },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
     ],
   },
@@ -273,9 +276,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'model', label: 'Xbox Modeli', type: 'select', options: ['Xbox Series X', 'Xbox Series S', 'Xbox One X', 'Xbox One S', 'Xbox One'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['512GB', '1TB', '2TB'] },
-      { key: 'color', label: 'Renk', type: 'text' },
       { key: 'controllers', label: 'Kol Sayısı', type: 'text', keyboardType: 'numeric' },
-      { key: 'games', label: 'Oyunlar', type: 'text' },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
     ],
   },
@@ -293,10 +294,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
         required: true,
         options: ['Mono (Siyah-Beyaz)', 'Renkli', 'Multifonksiyon', 'A3 Boyut', 'A4 Boyut', 'Büro Tipi', 'Endüstriyel', 'Taşınabilir'],
       },
-      { key: 'connectionType', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'WiFi', 'Ethernet', 'USB + WiFi', 'USB + Ethernet', 'WiFi + Ethernet'] },
-      { key: 'copySpeed', label: 'Kopya Hızı', type: 'text' },
+      { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'WiFi', 'Ethernet', 'USB + WiFi', 'USB + Ethernet', 'WiFi + Ethernet'] },
+      { key: 'speed', label: 'Kopya Hızı', type: 'text' },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
-      { key: 'color', label: 'Renk', type: 'text' },
     ],
   },
   {
@@ -313,9 +313,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
         required: true,
         options: ['Laser Yazıcı', 'Mürekkep Püskürtmeli', 'Lazer Yazıcı', 'Multifonksiyon', 'A3 Yazıcı', 'A4 Yazıcı', 'Taşınabilir', 'Büro Tipi'],
       },
-      { key: 'color', label: 'Renk', type: 'select', options: ['Siyah-Beyaz', 'Renkli', 'Siyah-Beyaz + Renkli'] },
-      { key: 'connectionType', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'WiFi', 'Ethernet', 'USB + WiFi', 'USB + Ethernet', 'WiFi + Ethernet', 'Bluetooth'] },
-      { key: 'printSpeed', label: 'Yazdırma Hızı', type: 'text' },
+      { key: 'printColor', label: 'Baskı Rengi', type: 'select', options: ['Siyah-Beyaz', 'Renkli', 'Siyah-Beyaz + Renkli'] },
+      { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'WiFi', 'Ethernet', 'USB + WiFi', 'USB + Ethernet', 'WiFi + Ethernet', 'Bluetooth'] },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
     ],
   },
@@ -333,9 +332,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
         required: true,
         options: ['Flatbed (Düz Yatak)', 'Sheet-fed (Sayfa Beslemeli)', 'Handheld (El Tipi)', 'Drum (Tambur)', 'Film', 'Slide', 'Document', 'Diğer'],
       },
-      { key: 'connectionType', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'USB 2.0', 'USB 3.0', 'USB-C', 'WiFi', 'Ethernet', 'Firewire', 'SCSI', 'Diğer'] },
+      { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'USB 2.0', 'USB 3.0', 'USB-C', 'WiFi', 'Ethernet', 'Firewire', 'SCSI', 'Diğer'] },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
-      { key: 'scanSpeed', label: 'Tarama Hızı', type: 'text' },
     ],
   },
 ];
