@@ -24,12 +24,14 @@ Doğrulama: `tsc` uygulama kodunda 0 hata; ESLint 0 sorun. Geçici jest testiyle
 7. **Bize-sat raporu bölüm 2 ile hizalama:** renk/oyunlar formdan çıkarıldı; `connectionType` → `connectivity`, `copySpeed` → `speed`, yazıcı rengi → `printColor`; `printSpeed`/`scanSpeed` çıkarıldı; gaming-wheel'e zorunlu `compatibility` (Bilgisayar/Playstation/Xbox/Bilgisayar+Playstation/Bilgisayar+Xbox) eklendi.
 8. **Bölüm 3 ile hizalama (web'deki yeni alanlar):** telefon (`accountLock`, `partReplaced`, `biometricWorking`), tablet (`accountLock`), işlemci (`pinDamage`), SSD (`driveHealth`), mouse (`clickIssue`), PlayStation/Xbox (`stickDrift`; `controllers` 1-4 seçici), gamepad (`stickDrift`), direksiyon (`pedal`, `shifterIncluded`, `forceFeedback`), yazıcı/fotokopi (`pageCount`), soğutucu (`mountingKit`), monitör/notebook (`screenStatus`, `deadPixelCount`).
 
+9. **Bölüm 3 kalan alanlar ve form hataları (web `70f03c6` ile hizalı):** notebook (şarj adaptörü, klavye düzeni, bilinen arıza), masaüstü (bilinen arıza; disk tipi `SSD(NVMe)` biçimi), işlemci (overclock), RAM (kit), monitör (aksesuar; çözünürlük/yenileme/panel seçici), klavye (eksik tuş), kulaklık (tip, mikrofon, ped, şarj kutusu), soğutucu (pompa; tip seçenekleri), kasa (yan panel, fan; güç kaynağı Var/Yok + watt), PlayStation (jailbreak, firmware), PS/Xbox/gamepad **Kullanım Durumu (web'de zorunlu)**, gamepad pil, tablet (aksesuar, ekran, ölü piksel; depolama seçici), ses sistemi (tip, kumanda/kablo), yazıcı/fotokopi (toner; ADF), tarayıcı (ADF, kullanım; Türkçe tip değerleri), SSD (`type` form faktörü, `interface` serbest metin), mouse (bağlantı seçenekleri), telefon (RAM opsiyonel, ekran boyutu çıkarıldı).
+
 Değişmezlik kontrolü (elle çalıştırıldı): mobile config'teki tüm `key` değerleri web `lib/handleProductSubmission.ts` `ALLOWED_FIELDS` içinde; kategori içinde çift anahtar yok. **Önemli:** mobile bu alanları göndermeden önce web dalı (`feat/bize-sat-alan-temizligi`) prod'a çıkmalı; o zamana kadar yeni alanlar sunucuda sessizce atılır (gönderim hata vermez).
 
 ## Bilinçli olarak YAPILMAYANLAR (kapsam / onay)
 
 - Yeni alanların hiçbiri zorunlu değil (web'de de değil); telefon/tablet `accountLock` için zorunlu yapmak ayrı karar.
-- Rapor bölüm 3'ün düşük öncelikli kalemleri yapılmadı (klavye eksik tuş, kulaklık tipi/mikrofon, kasa cam/fan, tarayıcı ADF, RAM kit bilgisi, notebook adaptör/arıza, ekran kartı bellek tipi vb.).
+- Bölüm 4-5 (kozmetik varsayılanı, ölü admin alanları, kategori adı tutarsızlığı, yazıcı tip listesinin ayrıştırılması) yapılmadı.
 - Web'de bazı yetim/ölü sayfalar Türkçe id (`kasa`, `islemci`, `sogutucu`…) ve `steering-wheel` kullanıyor; mobile bunlarla eşleşmiyor ve eşleşmesi gerekmiyor (canlı akış İngilizce id'li sayfalar).
 
 ## Sağlık taraması (kapsam dışı, düzeltilmedi)

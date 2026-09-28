@@ -46,6 +46,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'batteryHealth', label: 'Batarya Sağlığı', type: 'text' },
       { key: 'screenStatus', label: 'Ekran Durumu', type: 'select', options: ['Sorunsuz', 'Hafif çizik / leke', 'Belirgin çizik / leke', 'Kırık / çatlak'] },
       { key: 'deadPixelCount', label: 'Ölü / Sıkışmış Piksel Sayısı', type: 'text', keyboardType: 'numeric' },
+      { key: 'chargerIncluded', label: 'Şarj Adaptörü Dahil mi?', type: 'select', options: ['Evet', 'Hayır'] },
+      { key: 'layout', label: 'Klavye Düzeni', type: 'select', options: ['TR-Q', 'TR-F', 'US', 'Diğer'] },
+      { key: 'knownIssues', label: 'Bilinen Arıza / Sorun', type: 'text' },
     ],
   },
   {
@@ -56,7 +59,10 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'size', label: 'Boyut', type: 'select', options: ['ATX', 'Micro-ATX', 'Mini-ITX'] },
-      { key: 'powerSupply', label: 'Güç Kaynağı Dahil mi', type: 'text' },
+      { key: 'powerSupply', label: 'Güç Kaynağı', type: 'select', options: ['Var', 'Yok'] },
+      { key: 'wattValue', label: 'Güç Kaynağı (W)', type: 'text' },
+      { key: 'sidePanelCondition', label: 'Yan Panel Durumu', type: 'select', options: ['Sağlam', 'Çizik / çatlak', 'Yan panel yok'] },
+      { key: 'includedFans', label: 'Dahil Fanlar', type: 'text' },
     ],
   },
   {
@@ -84,6 +90,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'cache', label: 'Önbellek', type: 'text' },
       { key: 'stokFan', label: 'Stok Fan Var mı', type: 'boolean' },
       { key: 'pinDamage', label: 'Soket Pinlerinde Eğiklik / Hasar Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
+      { key: 'overclocked', label: 'Overclock / Delid Yapıldı mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
   {
@@ -94,11 +101,12 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'screenSize', label: 'Ekran Boyutu', type: 'text' },
-      { key: 'resolution', label: 'Çözünürlük', type: 'text' },
-      { key: 'refreshRate', label: 'Yenileme Hızı', type: 'text' },
-      { key: 'panelType', label: 'Panel Tipi', type: 'select', options: ['IPS', 'VA', 'TN', 'OLED'] },
+      { key: 'resolution', label: 'Çözünürlük', type: 'select', options: ['1366x768 (HD)', '1920x1080 (Full HD)', '2560x1440 (2K / QHD)', '3440x1440 (Ultrawide QHD)', '3840x2160 (4K / UHD)', 'Diğer'] },
+      { key: 'refreshRate', label: 'Yenileme Hızı', type: 'select', options: ['60 Hz', '75 Hz', '100 Hz', '120 Hz', '144 Hz', '165 Hz', '180 Hz', '240 Hz', '360 Hz', 'Diğer'] },
+      { key: 'panelType', label: 'Panel Tipi', type: 'select', options: ['IPS', 'VA', 'TN', 'OLED', 'Diğer'] },
       { key: 'screenStatus', label: 'Ekran Durumu', type: 'select', options: ['Sorunsuz', 'Hafif çizik / leke', 'Belirgin çizik / leke', 'Kırık / çatlak'] },
       { key: 'deadPixelCount', label: 'Ölü / Sıkışmış Piksel Sayısı', type: 'text', keyboardType: 'numeric' },
+      { key: 'accessories', label: 'Stand / Kablolar Dahil mi?', type: 'select', options: ['Stand ve kablolar dahil', 'Sadece stand', 'Sadece kablolar', 'Hiçbiri'] },
     ],
   },
   {
@@ -109,8 +117,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'switchType', label: 'Switch Tipi', type: 'text' },
-      { key: 'layout', label: 'Düzen', type: 'select', options: ['TR-Q', 'TR-F', 'US'] },
+      { key: 'layout', label: 'Düzen', type: 'select', options: ['TR-Q', 'TR-F', 'US', 'Diğer'] },
       { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz', 'Bluetooth'] },
+      { key: 'missingKeys', label: 'Eksik Tuş / Tuş Kapağı Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
   {
@@ -121,7 +130,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'dpi', label: 'DPI', type: 'text' },
-      { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz', 'Bluetooth'] },
+      { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['USB Kablolu', '2.4GHz Kablosuz', 'Bluetooth', '2.4GHz + Bluetooth'] },
       { key: 'clickIssue', label: 'Çift Tıklama / Tık Sorunu Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
@@ -131,7 +140,13 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     icon: '🎧',
     endpoint: '/api/headphones-submissions',
     responseShape: 'standard',
-    extraFields: [{ key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz', 'Bluetooth'] }],
+    extraFields: [
+      { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz', 'Bluetooth'] },
+      { key: 'type', label: 'Kulaklık Tipi', type: 'select', options: ['Kulak üstü', 'Kulak içi', 'TWS (kablosuz kulak içi)'] },
+      { key: 'micWorking', label: 'Mikrofon Çalışıyor mu?', type: 'select', options: ['Evet', 'Hayır', 'Mikrofonu yok'] },
+      { key: 'earPadCondition', label: 'Kulak Pedi Durumu', type: 'select', options: ['İyi', 'Yıpranmış', 'Değiştirilmiş'] },
+      { key: 'chargingCase', label: 'TWS: Şarj Kutusu Dahil mi?', type: 'select', options: ['Evet', 'Hayır', 'TWS değil'] },
+    ],
   },
   {
     id: 'ram',
@@ -142,7 +157,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'capacity', label: 'Kapasite', type: 'text' },
       { key: 'speed', label: 'Hız', type: 'text' },
-      { key: 'ramType', label: 'Tip', type: 'select', options: ['DDR3', 'DDR4', 'DDR5'] },
+      { key: 'ramType', label: 'RAM Tipi', type: 'select', options: ['DDR3', 'DDR4', 'DDR5'] },
+      { key: 'moduleKit', label: 'Kit / Modül Sayısı (örn: 2x8GB)', type: 'text' },
     ],
   },
   {
@@ -153,7 +169,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'capacity', label: 'Kapasite', type: 'text' },
-      { key: 'interface', label: 'Arayüz', type: 'select', options: ['SATA', 'NVMe'] },
+      { key: 'type', label: 'Form Faktörü', type: 'select', options: ['M.2 NVMe', 'M.2 SATA', '2.5 inç SATA'] },
+      { key: 'interface', label: 'Arayüz', type: 'text' },
       { key: 'driveHealth', label: 'Sağlık Durumu / Yazılan Veri', type: 'text' },
     ],
   },
@@ -165,9 +182,12 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'screenSize', label: 'Ekran Boyutu', type: 'text' },
-      { key: 'storage', label: 'Depolama', type: 'text' },
+      { key: 'storage', label: 'Depolama', type: 'select', options: ['32GB', '64GB', '128GB', '256GB', '512GB', '1TB', '2TB'] },
       { key: 'batteryHealth', label: 'Batarya Sağlığı', type: 'text' },
       { key: 'accountLock', label: 'Hesap Kilidi (iCloud / Google)', type: 'select', options: ['Kapalı', 'Açık'] },
+      { key: 'accessories', label: 'Kalem / Klavye Dahil mi?', type: 'select', options: ['Kalem ve klavye dahil', 'Sadece kalem', 'Sadece klavye', 'Hiçbiri'] },
+      { key: 'screenStatus', label: 'Ekran Durumu', type: 'select', options: ['Sorunsuz', 'Hafif çizik / leke', 'Belirgin çizik / leke', 'Kırık / çatlak'] },
+      { key: 'deadPixelCount', label: 'Ölü / Sıkışmış Piksel Sayısı', type: 'text', keyboardType: 'numeric' },
     ],
   },
   {
@@ -177,8 +197,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     endpoint: '/api/cooler-submissions',
     responseShape: 'standard',
     extraFields: [
-      { key: 'type', label: 'Tip', type: 'select', options: ['Hava', 'Sıvı'] },
+      { key: 'type', label: 'Tip', type: 'select', options: ['Hava Soğutucu', 'Sıvı Soğutucu (AIO)'] },
       { key: 'mountingKit', label: 'Montaj Aparatları / Soket Kitleri Dahil mi?', type: 'select', options: ['Evet, tam', 'Eksik var'] },
+      { key: 'pumpIssue', label: 'Sıvı Soğutucu: Pompa Sesi / Sızıntı Var mı?', type: 'select', options: ['Hayır', 'Evet', 'Hava soğutucu'] },
     ],
   },
   {
@@ -190,6 +211,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'power', label: 'Güç', type: 'text' },
       { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz', 'Bluetooth'] },
+      { key: 'type', label: 'Tip', type: 'select', options: ['Bluetooth Hoparlör', 'Soundbar', '2.1 Sistem', '5.1 Sistem', 'Diğer'] },
+      { key: 'accessories', label: 'Kumanda / Kablolar Dahil mi?', type: 'select', options: ['Kumanda ve kablolar dahil', 'Sadece kablolar', 'Sadece kumanda', 'Hiçbiri'] },
     ],
   },
   {
@@ -229,9 +252,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     responseShape: 'standard',
     extraFields: [
       { key: 'storage', label: 'Depolama', type: 'select', options: ['32GB', '64GB', '128GB', '256GB', '512GB', '1TB'], required: true },
-      { key: 'ram', label: 'RAM', type: 'select', options: ['2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '16GB'], required: true },
+      { key: 'ram', label: 'RAM', type: 'select', options: ['2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '16GB'] },
       { key: 'batteryHealth', label: 'Batarya Sağlığı (%)', type: 'text', keyboardType: 'numeric' },
-      { key: 'screenSize', label: 'Ekran Boyutu (inç)', type: 'text' },
       { key: 'registrationType', label: 'Kayıt Türü', type: 'select', options: ['Yurtiçi', 'Yurtdışı'], required: true },
       { key: 'accountLock', label: 'Hesap Kilidi (iCloud / Google)', type: 'select', options: ['Kapalı', 'Açık'] },
       { key: 'partReplaced', label: 'Ekran / Parça Değişimi Yapıldı mı?', type: 'select', options: ['Hayır', 'Evet, orijinal parça', 'Evet, yan sanayi parça'] },
@@ -252,10 +274,11 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'ram', label: 'RAM', type: 'text', required: true },
       { key: 'ramType', label: 'RAM Tipi', type: 'select', options: ['DDR3', 'DDR4', 'DDR5'] },
       { key: 'storage', label: 'Depolama', type: 'text', required: true },
-      { key: 'storageType', label: 'Depolama Tipi', type: 'select', options: ['SSD', 'NVMe', 'HDD', 'SSD + HDD'] },
+      { key: 'storageType', label: 'Depolama Tipi', type: 'select', options: ['SSD(SATA)', 'SSD(NVMe)', 'HDD', 'SSD(SATA)+HDD', 'SSD(NVMe)+HDD'] },
       { key: 'powerSupply', label: 'Güç Kaynağı', type: 'text' },
       { key: 'motherboard', label: 'Anakart', type: 'text' },
       { key: 'case', label: 'Kasa', type: 'text' },
+      { key: 'knownIssues', label: 'Bilinen Arıza / Sorun', type: 'text' },
     ],
   },
   {
@@ -271,6 +294,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'controllers', label: 'Kol Sayısı', type: 'select', options: ['1', '2', '3', '4'] },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
       { key: 'stickDrift', label: 'Kolda Stick Drift Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
+      { key: 'condition', label: 'Kullanım Durumu', type: 'select', options: ['Sıfır', 'Çok İyi', 'İyi', 'Orta', 'Kötü'], required: true },
+      { key: 'jailbreak', label: 'Jailbreak / Modlu mu?', type: 'select', options: ['Hayır', 'Evet'] },
+      { key: 'firmware', label: 'Firmware Sürümü', type: 'text' },
     ],
   },
   {
@@ -280,9 +306,10 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     endpoint: '/api/submissions',
     responseShape: 'standard',
     extraFields: [
-      { key: 'condition', label: 'Durum', type: 'text' },
+      { key: 'condition', label: 'Kullanım Durumu', type: 'select', options: ['Sıfır', 'Çok İyi', 'İyi', 'Orta', 'Kötü'], required: true },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
       { key: 'stickDrift', label: 'Stick Drift Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
+      { key: 'batteryHealth', label: 'Pil Durumu', type: 'select', options: ['İyi', 'Zayıf', 'Kablolu / pilsiz'] },
     ],
   },
   {
@@ -298,6 +325,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'controllers', label: 'Kol Sayısı', type: 'select', options: ['1', '2', '3', '4'] },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
       { key: 'stickDrift', label: 'Kolda Stick Drift Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
+      { key: 'condition', label: 'Kullanım Durumu', type: 'select', options: ['Sıfır', 'Çok İyi', 'İyi', 'Orta', 'Kötü'], required: true },
     ],
   },
   {
@@ -318,6 +346,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'speed', label: 'Kopya Hızı', type: 'text' },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
       { key: 'pageCount', label: 'Sayfa Sayacı (Toplam Kopya)', type: 'text', keyboardType: 'numeric' },
+      { key: 'tonerStatus', label: 'Toner / Drum Durumu', type: 'select', options: ['Dahil, dolu', 'Dahil, boş / az', 'Dahil değil'] },
+      { key: 'adfIncluded', label: 'Otomatik Doküman Besleyici (ADF) / Kaset Dahil mi?', type: 'select', options: ['Evet', 'Hayır'] },
     ],
   },
   {
@@ -332,12 +362,13 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
         label: 'Yazıcı Tipi',
         type: 'select',
         required: true,
-        options: ['Laser Yazıcı', 'Mürekkep Püskürtmeli', 'Lazer Yazıcı', 'Multifonksiyon', 'A3 Yazıcı', 'A4 Yazıcı', 'Taşınabilir', 'Büro Tipi'],
+        options: ['Mürekkep Püskürtmeli', 'Lazer Yazıcı', 'Multifonksiyon', 'A3 Yazıcı', 'A4 Yazıcı', 'Taşınabilir', 'Büro Tipi'],
       },
       { key: 'printColor', label: 'Baskı Rengi', type: 'select', options: ['Siyah-Beyaz', 'Renkli', 'Siyah-Beyaz + Renkli'] },
       { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'WiFi', 'Ethernet', 'USB + WiFi', 'USB + Ethernet', 'WiFi + Ethernet', 'Bluetooth'] },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
       { key: 'pageCount', label: 'Sayfa Sayacı (Toplam Baskı)', type: 'text', keyboardType: 'numeric' },
+      { key: 'tonerStatus', label: 'Toner / Kartuş Durumu', type: 'select', options: ['Dahil, dolu', 'Dahil, boş / az', 'Dahil değil'] },
     ],
   },
   {
@@ -352,10 +383,12 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
         label: 'Tarayıcı Tipi',
         type: 'select',
         required: true,
-        options: ['Flatbed (Düz Yatak)', 'Sheet-fed (Sayfa Beslemeli)', 'Handheld (El Tipi)', 'Drum (Tambur)', 'Film', 'Slide', 'Document', 'Diğer'],
+        options: ['Flatbed (Düz Yatak)', 'Sheet-fed (Sayfa Beslemeli)', 'Handheld (El Tipi)', 'Drum (Tambur)', 'Film Tarayıcı', 'Slayt Tarayıcı', 'Doküman Tarayıcı', 'Diğer'],
       },
-      { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'USB 2.0', 'USB 3.0', 'USB-C', 'WiFi', 'Ethernet', 'Firewire', 'SCSI', 'Diğer'] },
+      { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB (sürüm bilinmiyor)', 'USB 2.0', 'USB 3.0', 'USB-C', 'WiFi', 'Ethernet', 'Firewire', 'SCSI', 'Diğer'] },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
+      { key: 'adfIncluded', label: 'Otomatik Belge Besleyici (ADF) Var mı?', type: 'select', options: ['Evet', 'Hayır'] },
+      { key: 'usageLevel', label: 'Kullanım Yoğunluğu', type: 'select', options: ['Hafif', 'Orta', 'Yoğun'] },
     ],
   },
 ];
