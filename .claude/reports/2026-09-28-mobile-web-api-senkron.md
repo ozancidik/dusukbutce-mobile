@@ -21,9 +21,15 @@ Doğrulama: `tsc` — `app/`, `src/features`, `src/core/network`, `src/shared` a
 
 Doğrulama: `tsc` uygulama kodunda 0 hata; ESLint 0 sorun. Geçici jest testiyle 6 durum doğrulandı (id benzersizliği/hizası, sound-system yok, kozmetik liste, telefon zorunlu alanları, PlayStation marka+model, boşluk-only değerler); test dosyası commit'lenmedi çünkü jest ayarı ve `@types/jest` yalnızca commit'lenmemiş `package.json`'da. Cihazda/simülatörde çalıştırılmadı.
 
+7. **Bize-sat raporu bölüm 2 ile hizalama:** renk/oyunlar formdan çıkarıldı; `connectionType` → `connectivity`, `copySpeed` → `speed`, yazıcı rengi → `printColor`; `printSpeed`/`scanSpeed` çıkarıldı; gaming-wheel'e zorunlu `compatibility` (Bilgisayar/Playstation/Xbox/Bilgisayar+Playstation/Bilgisayar+Xbox) eklendi.
+8. **Bölüm 3 ile hizalama (web'deki yeni alanlar):** telefon (`accountLock`, `partReplaced`, `biometricWorking`), tablet (`accountLock`), işlemci (`pinDamage`), SSD (`driveHealth`), mouse (`clickIssue`), PlayStation/Xbox (`stickDrift`; `controllers` 1-4 seçici), gamepad (`stickDrift`), direksiyon (`pedal`, `shifterIncluded`, `forceFeedback`), yazıcı/fotokopi (`pageCount`), soğutucu (`mountingKit`), monitör/notebook (`screenStatus`, `deadPixelCount`).
+
+Değişmezlik kontrolü (elle çalıştırıldı): mobile config'teki tüm `key` değerleri web `lib/handleProductSubmission.ts` `ALLOWED_FIELDS` içinde; kategori içinde çift anahtar yok. **Önemli:** mobile bu alanları göndermeden önce web dalı (`feat/bize-sat-alan-temizligi`) prod'a çıkmalı; o zamana kadar yeni alanlar sunucuda sessizce atılır (gönderim hata vermez).
+
 ## Bilinçli olarak YAPILMAYANLAR (kapsam / onay)
 
-- **ALLOWED_FIELDS dışı alanlar sessizce atılıyor:** `color`, `controllers`, `games`, `connectionType`, `printSpeed`, `copySpeed`, `scanSpeed`. Web `compatibility` alanı gaming-wheel'de mobile'da yok. Web rapor bölüm 2 kararlarıyla birlikte ele alınmalı (bir sonraki adım).
+- Yeni alanların hiçbiri zorunlu değil (web'de de değil); telefon/tablet `accountLock` için zorunlu yapmak ayrı karar.
+- Rapor bölüm 3'ün düşük öncelikli kalemleri yapılmadı (klavye eksik tuş, kulaklık tipi/mikrofon, kasa cam/fan, tarayıcı ADF, RAM kit bilgisi, notebook adaptör/arıza, ekran kartı bellek tipi vb.).
 - Web'de bazı yetim/ölü sayfalar Türkçe id (`kasa`, `islemci`, `sogutucu`…) ve `steering-wheel` kullanıyor; mobile bunlarla eşleşmiyor ve eşleşmesi gerekmiyor (canlı akış İngilizce id'li sayfalar).
 
 ## Sağlık taraması (kapsam dışı, düzeltilmedi)

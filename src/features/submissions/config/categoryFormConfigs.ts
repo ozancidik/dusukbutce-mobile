@@ -44,6 +44,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'graphicsCard', label: 'Ekran Kartı', type: 'text' },
       { key: 'screenSize', label: 'Ekran Boyutu', type: 'text' },
       { key: 'batteryHealth', label: 'Batarya Sağlığı', type: 'text' },
+      { key: 'screenStatus', label: 'Ekran Durumu', type: 'select', options: ['Sorunsuz', 'Hafif çizik / leke', 'Belirgin çizik / leke', 'Kırık / çatlak'] },
+      { key: 'deadPixelCount', label: 'Ölü / Sıkışmış Piksel Sayısı', type: 'text', keyboardType: 'numeric' },
     ],
   },
   {
@@ -81,6 +83,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'socket', label: 'Soket', type: 'text' },
       { key: 'cache', label: 'Önbellek', type: 'text' },
       { key: 'stokFan', label: 'Stok Fan Var mı', type: 'boolean' },
+      { key: 'pinDamage', label: 'Soket Pinlerinde Eğiklik / Hasar Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
   {
@@ -94,6 +97,8 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
       { key: 'refreshRate', label: 'Yenileme Hızı', type: 'text' },
       { key: 'panelType', label: 'Panel Tipi', type: 'select', options: ['IPS', 'VA', 'TN', 'OLED'] },
+      { key: 'screenStatus', label: 'Ekran Durumu', type: 'select', options: ['Sorunsuz', 'Hafif çizik / leke', 'Belirgin çizik / leke', 'Kırık / çatlak'] },
+      { key: 'deadPixelCount', label: 'Ölü / Sıkışmış Piksel Sayısı', type: 'text', keyboardType: 'numeric' },
     ],
   },
   {
@@ -117,6 +122,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'dpi', label: 'DPI', type: 'text' },
       { key: 'connectivity', label: 'Bağlantı', type: 'select', options: ['Kablolu', 'Kablosuz', 'Bluetooth'] },
+      { key: 'clickIssue', label: 'Çift Tıklama / Tık Sorunu Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
   {
@@ -148,6 +154,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'capacity', label: 'Kapasite', type: 'text' },
       { key: 'interface', label: 'Arayüz', type: 'select', options: ['SATA', 'NVMe'] },
+      { key: 'driveHealth', label: 'Sağlık Durumu / Yazılan Veri', type: 'text' },
     ],
   },
   {
@@ -160,6 +167,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'screenSize', label: 'Ekran Boyutu', type: 'text' },
       { key: 'storage', label: 'Depolama', type: 'text' },
       { key: 'batteryHealth', label: 'Batarya Sağlığı', type: 'text' },
+      { key: 'accountLock', label: 'Hesap Kilidi (iCloud / Google)', type: 'select', options: ['Kapalı', 'Açık'] },
     ],
   },
   {
@@ -168,7 +176,10 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     icon: '❄️',
     endpoint: '/api/cooler-submissions',
     responseShape: 'standard',
-    extraFields: [{ key: 'type', label: 'Tip', type: 'select', options: ['Hava', 'Sıvı'] }],
+    extraFields: [
+      { key: 'type', label: 'Tip', type: 'select', options: ['Hava', 'Sıvı'] },
+      { key: 'mountingKit', label: 'Montaj Aparatları / Soket Kitleri Dahil mi?', type: 'select', options: ['Evet, tam', 'Eksik var'] },
+    ],
   },
   {
     id: 'audio-system',
@@ -196,6 +207,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
         options: ['Bilgisayar', 'Playstation', 'Xbox', 'Bilgisayar+Playstation', 'Bilgisayar+Xbox'],
         required: true,
       },
+      { key: 'pedal', label: 'Pedal Seti Dahil mi?', type: 'select', options: ['Evet', 'Hayır'] },
+      { key: 'shifterIncluded', label: 'Vites Kolu Dahil mi?', type: 'select', options: ['Evet', 'Hayır'] },
+      { key: 'forceFeedback', label: 'Force Feedback Çalışıyor mu?', type: 'select', options: ['Evet', 'Hayır', 'Desteklemiyor'] },
     ],
   },
   // Aşağıdaki 8 kategoride web'de dedicated bir `/api/xxx-submissions` route'u
@@ -219,6 +233,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'batteryHealth', label: 'Batarya Sağlığı (%)', type: 'text', keyboardType: 'numeric' },
       { key: 'screenSize', label: 'Ekran Boyutu (inç)', type: 'text' },
       { key: 'registrationType', label: 'Kayıt Türü', type: 'select', options: ['Yurtiçi', 'Yurtdışı'], required: true },
+      { key: 'accountLock', label: 'Hesap Kilidi (iCloud / Google)', type: 'select', options: ['Kapalı', 'Açık'] },
+      { key: 'partReplaced', label: 'Ekran / Parça Değişimi Yapıldı mı?', type: 'select', options: ['Hayır', 'Evet, orijinal parça', 'Evet, yan sanayi parça'] },
+      { key: 'biometricWorking', label: 'Face ID / Touch ID Çalışıyor mu?', type: 'select', options: ['Evet', 'Hayır', 'Cihazda yok'] },
     ],
   },
   {
@@ -251,8 +268,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'model', label: 'PlayStation Modeli', type: 'select', options: ['PS5', 'PS5 Digital', 'PS4 Pro', 'PS4', 'PS4 Slim'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['500GB', '825GB', '1TB', '2TB'] },
-      { key: 'controllers', label: 'Kol Sayısı', type: 'text', keyboardType: 'numeric' },
+      { key: 'controllers', label: 'Kol Sayısı', type: 'select', options: ['1', '2', '3', '4'] },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
+      { key: 'stickDrift', label: 'Kolda Stick Drift Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
   {
@@ -264,6 +282,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'condition', label: 'Durum', type: 'text' },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
+      { key: 'stickDrift', label: 'Stick Drift Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
   {
@@ -276,8 +295,9 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
     extraFields: [
       { key: 'model', label: 'Xbox Modeli', type: 'select', options: ['Xbox Series X', 'Xbox Series S', 'Xbox One X', 'Xbox One S', 'Xbox One'], required: true },
       { key: 'storage', label: 'Depolama', type: 'select', options: ['512GB', '1TB', '2TB'] },
-      { key: 'controllers', label: 'Kol Sayısı', type: 'text', keyboardType: 'numeric' },
+      { key: 'controllers', label: 'Kol Sayısı', type: 'select', options: ['1', '2', '3', '4'] },
       { key: 'accessories', label: 'Aksesuarlar', type: 'text' },
+      { key: 'stickDrift', label: 'Kolda Stick Drift Var mı?', type: 'select', options: ['Hayır', 'Evet'] },
     ],
   },
   {
@@ -297,6 +317,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'WiFi', 'Ethernet', 'USB + WiFi', 'USB + Ethernet', 'WiFi + Ethernet'] },
       { key: 'speed', label: 'Kopya Hızı', type: 'text' },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
+      { key: 'pageCount', label: 'Sayfa Sayacı (Toplam Kopya)', type: 'text', keyboardType: 'numeric' },
     ],
   },
   {
@@ -316,6 +337,7 @@ export const CATEGORY_FORM_CONFIGS: CategoryFormConfig[] = [
       { key: 'printColor', label: 'Baskı Rengi', type: 'select', options: ['Siyah-Beyaz', 'Renkli', 'Siyah-Beyaz + Renkli'] },
       { key: 'connectivity', label: 'Bağlantı Türü', type: 'select', options: ['USB', 'WiFi', 'Ethernet', 'USB + WiFi', 'USB + Ethernet', 'WiFi + Ethernet', 'Bluetooth'] },
       { key: 'resolution', label: 'Çözünürlük', type: 'text' },
+      { key: 'pageCount', label: 'Sayfa Sayacı (Toplam Baskı)', type: 'text', keyboardType: 'numeric' },
     ],
   },
   {
