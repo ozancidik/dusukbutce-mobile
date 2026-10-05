@@ -11,7 +11,7 @@ export interface HomeCategoryItem {
 }
 
 export const BIZE_SAT_HOME_CATEGORIES: HomeCategoryItem[] = [
-  { name: 'Cep Telefonu', icon: '📱', formId: 'phone' },
+  { name: 'Cep Telefonu', icon: '📱', formId: 'cep-telefonu' },
   { name: 'Dizüstü (Notebook)', icon: '💻', formId: 'notebook' },
   { name: 'Masaüstü (Kasa)', icon: '🖥️', formId: 'desktop' },
   { name: 'Monitör', icon: '🖥️', formId: 'monitor' },
@@ -29,9 +29,9 @@ export const BIZE_SAT_HOME_CATEGORIES: HomeCategoryItem[] = [
   { name: 'Tablet', icon: '📱', formId: 'tablet' },
   { name: 'Kulaklık', icon: '🎧', formId: 'headphones' },
   { name: 'Ses Sistemi', icon: '🔊', formId: 'audio-system' },
-  { name: 'Fotokopi Makinesi', icon: '📄', formId: 'photocopier' },
-  { name: 'Yazıcı', icon: '🖨️', formId: 'printer' },
-  { name: 'Tarayıcı', icon: '🔍', formId: 'scanner' },
+  { name: 'Fotokopi Makinesi', icon: '📄', formId: 'fotokopi-makinesi' },
+  { name: 'Yazıcı', icon: '🖨️', formId: 'yazici' },
+  { name: 'Tarayıcı', icon: '🔍', formId: 'tarayici' },
 ];
 
 // dusukbutce.com anasayfasındaki Teknik Servis kategori listesi (satır 721-730).

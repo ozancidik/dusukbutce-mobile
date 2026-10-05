@@ -8,6 +8,7 @@ import { DynamicField } from '../components/DynamicField';
 import { ImagePickerGrid } from '../components/ImagePickerGrid';
 import { CategoryFormConfig, COSMETIC_CONDITION_OPTIONS } from '../config/categoryFormConfigs';
 import { submissionsRepository } from '../api/submissionsRepository';
+import { getMissingFields, hasOwnModelField } from '../validation';
 import { ApiException } from '../../../core/network/apiException';
 
 interface Props {
@@ -29,16 +30,22 @@ export function SubmissionFormScreen({ config }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{ submissionNumber: string } | null>(null);
 
+  // PlayStation/Xbox gibi kategorilerde markayı sabit config verir, modeli de
+  // kendi `model` select'i belirler; ortak Marka/Model kutuları o zaman gizlenir.
+  const hasFixedBrand = !!config.fixedBrand;
+  const hasOwnModel = hasOwnModelField(config);
+
   const onSubmit = async () => {
-    if (!brand.trim() || !model.trim() || !cosmeticCondition) {
-      Alert.alert('Eksik bilgi', 'Marka, model ve kozmetik durum alanları zorunludur.');
+    const missing = getMissingFields(config, { brand, model, cosmeticCondition, extraValues });
+    if (missing.length > 0) {
+      Alert.alert('Eksik bilgi', `Şu alanlar zorunludur: ${missing.join(', ')}`);
       return;
     }
     setIsSubmitting(true);
     try {
       const res = await submissionsRepository.submit(config, {
-        brand: brand.trim(),
-        model: model.trim(),
+        brand: config.fixedBrand ?? brand.trim(),
+        model: hasOwnModel ? String(extraValues.model).trim() : model.trim(),
         cosmeticCondition,
         description: description.trim(),
         hasWarranty,
@@ -83,11 +90,11 @@ export function SubmissionFormScreen({ config }: Props) {
       </Text>
       <Text style={styles.subtitle}>Ürün bilgilerini eksiksiz doldurun</Text>
 
-      <AppTextInput label="Marka" value={brand} onChangeText={setBrand} />
-      <AppTextInput label="Model" value={model} onChangeText={setModel} />
+      {hasFixedBrand ? null : <AppTextInput label="Marka *" value={brand} onChangeText={setBrand} />}
+      {hasOwnModel ? null : <AppTextInput label="Model *" value={model} onChangeText={setModel} />}
 
       <DynamicField
-        field={{ key: 'cosmeticCondition', label: 'Kozmetik Durum', type: 'select', options: COSMETIC_CONDITION_OPTIONS }}
+        field={{ key: 'cosmeticCondition', label: 'Kozmetik Durum', type: 'select', options: COSMETIC_CONDITION_OPTIONS, required: true }}
         value={cosmeticCondition}
         onChange={(v) => setCosmeticCondition(v as string)}
       />

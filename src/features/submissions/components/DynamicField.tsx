@@ -10,6 +10,8 @@ interface Props {
 }
 
 export function DynamicField({ field, value, onChange }: Props) {
+  const label = field.required ? `${field.label} *` : field.label;
+
   if (field.type === 'boolean') {
     const isOn = value === true;
     return (
@@ -23,7 +25,7 @@ export function DynamicField({ field, value, onChange }: Props) {
   if (field.type === 'select') {
     return (
       <View style={styles.wrapper}>
-        <Text style={styles.label}>{field.label}</Text>
+        <Text style={styles.label}>{label}</Text>
         <View style={styles.optionsRow}>
           {(field.options ?? []).map((option) => {
             const isActive = value === option;
@@ -44,7 +46,7 @@ export function DynamicField({ field, value, onChange }: Props) {
 
   return (
     <AppTextInput
-      label={field.label}
+      label={label}
       value={typeof value === 'string' ? value : ''}
       onChangeText={onChange}
       keyboardType={field.keyboardType === 'numeric' ? 'numeric' : 'default'}
