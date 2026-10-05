@@ -128,7 +128,7 @@ export async function learnFromRun(
 
   console.log(`\n✅ Learning phase complete`);
   console.log(`   Confidence: ${(state.learningConfidence * 100).toFixed(0)}%`);
-  console.log(`   Next optimization run ~${(optimizations.estimatedDuration / 1000).toFixed(1)}s\n`);
+  console.log(`   Next optimization run ~${(optimizations.estDuration / 1000).toFixed(1)}s\n`);
 
   return {
     state,

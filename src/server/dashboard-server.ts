@@ -3,9 +3,9 @@
  * Hosts learning dashboard on Express.js with WebSocket updates
  */
 
-import * as express from 'express';
+import express from 'express';
 import * as http from 'http';
-import * as WebSocket from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 import * as path from 'path';
 import * as fs from 'fs';
 import { LearningState } from '../core/ai/learning-metrics';
@@ -45,7 +45,7 @@ interface DashboardUpdate {
 export class CloudDashboardServer {
   private app: express.Application;
   private server: http.Server;
-  private wss: WebSocket.Server;
+  private wss: WebSocketServer;
   private config: DashboardServerConfig;
   private currentState: LearningState | null = null;
   private currentPatterns: PatternMatch[] = [];
@@ -66,7 +66,7 @@ export class CloudDashboardServer {
     this.ensureDataDir();
     this.app = express();
     this.server = http.createServer(this.app);
-    this.wss = new WebSocket.Server({ server: this.server });
+    this.wss = new WebSocketServer({ server: this.server });
 
     this.setupMiddleware();
     this.setupRoutes();
@@ -331,7 +331,7 @@ export class CloudDashboardServer {
    * Setup WebSocket for real-time updates
    */
   private setupWebSocket(): void {
-    this.wss.on('connection', (ws: WebSocket.WebSocket) => {
+    this.wss.on('connection', (ws: WebSocket) => {
       console.log(`📱 WebSocket client connected (${this.wss.clients.size} clients)`);
 
       // Send current state on connect

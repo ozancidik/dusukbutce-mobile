@@ -259,7 +259,7 @@ export class MultiProjectCoordinator {
         patternId: patternName.toLowerCase().replace(/\s+/g, '-'),
         projects: Array.from(data.projects),
         frequency: data.count,
-        impact: data.count > 2 ? 'high' : data.count > 1 ? 'medium' : 'low',
+        impact: (data.count > 2 ? 'high' : data.count > 1 ? 'medium' : 'low') as 'high' | 'medium' | 'low',
       }))
       .sort((a, b) => b.frequency - a.frequency);
   }

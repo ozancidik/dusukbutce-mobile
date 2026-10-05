@@ -141,7 +141,7 @@ export function parseAgentReport(report: AgentReport): Suggestion[] {
  */
 export async function processAgentReports(
   reports: AgentReport[],
-  config: ECCIntegrationConfig = {}
+  config: Partial<ECCIntegrationConfig> = {}
 ): Promise<{
   suggestions: Suggestion[];
   orchestrationResult: OrchestrationResult;
