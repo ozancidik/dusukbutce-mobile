@@ -5,6 +5,7 @@ const expoConfig = require("eslint-config-expo/flat");
 module.exports = defineConfig([
   expoConfig,
   {
-    ignores: ["dist/*"],
+    // .claude/worktrees: ajan worktree'leri repo kopyası içerir; lint gürültüsü yaratıyordu
+    ignores: ["dist/*", ".claude/worktrees/**"],
   }
 ]);
