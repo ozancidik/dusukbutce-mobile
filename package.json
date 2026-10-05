@@ -45,7 +45,8 @@
     "jest-expo": "57.0.4",
     "prettier": "3.9.9",
     "react-test-renderer": "19.2.3",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "ws": "^8.22.0"
   },
   "scripts": {
     "start": "expo start",

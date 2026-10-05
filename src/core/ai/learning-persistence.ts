@@ -8,9 +8,44 @@ import * as path from 'path';
 import { LearningState } from './learning-metrics';
 import { PatternMatch } from './pattern-detector';
 
-const ECC_DIR = path.join(process.env.HOME || '~', '.ecc');
-const LEARNING_STATE_FILE = path.join(ECC_DIR, 'learning-state.json');
-const LEARNING_BACKUP_DIR = path.join(ECC_DIR, 'backups');
+// Yollar HER çağrıda HOME'dan hesaplanır (modül yüklenirken bir kez değil): testler
+// HOME'u geçici dizine çevirir; sabit olsaydı gerçek ~/.ecc/ klasörüne yazılırdı.
+const eccDir = () => path.join(process.env.HOME || '~', '.ecc');
+const stateFile = () => path.join(eccDir(), 'learning-state.json');
+const backupDir = () => path.join(eccDir(), 'backups');
+
+// LearningState Map ve Date içerir; düz JSON.stringify Map'leri {} yapıp ajan/desen/risk
+// verisini sessizce kaybediyordu. Map'ler { __map__: [[k, v], ...] } olarak saklanır.
+const MAP_TAG = '__map__';
+
+export function stringifyLearningState(value: unknown): string {
+  return JSON.stringify(
+    value,
+    (_key, val) => (val instanceof Map ? { [MAP_TAG]: Array.from(val.entries()) } : val),
+    2
+  );
+}
+
+export function parseLearningState(text: string): PersistentLearningState {
+  const parsed = JSON.parse(text, (_key, val) =>
+    val && typeof val === 'object' && Array.isArray((val as Record<string, unknown>)[MAP_TAG])
+      ? new Map((val as Record<string, [unknown, unknown][]>)[MAP_TAG])
+      : val
+  ) as PersistentLearningState;
+
+  // Eski sürümde yazılmış dosyalar Map'leri {} olarak içerir: boş Map'e normalleştir
+  const st = parsed?.state as unknown as Record<string, unknown> | undefined;
+  if (st) {
+    for (const key of ['agents', 'patterns', 'fileRisks']) {
+      if (!(st[key] instanceof Map)) {
+        st[key] = new Map(Object.entries((st[key] as object) || {}));
+      }
+    }
+    if (typeof st.lastAnalysis === 'string') st.lastAnalysis = new Date(st.lastAnalysis);
+  }
+  return parsed;
+}
+
 
 /**
  * Persistent state structure
@@ -33,11 +68,11 @@ export interface PersistentLearningState {
  * Ensure ECC directories exist
  */
 function ensureDirectories() {
-  if (!fs.existsSync(ECC_DIR)) {
-    fs.mkdirSync(ECC_DIR, { recursive: true });
+  if (!fs.existsSync(eccDir())) {
+    fs.mkdirSync(eccDir(), { recursive: true });
   }
-  if (!fs.existsSync(LEARNING_BACKUP_DIR)) {
-    fs.mkdirSync(LEARNING_BACKUP_DIR, { recursive: true });
+  if (!fs.existsSync(backupDir())) {
+    fs.mkdirSync(backupDir(), { recursive: true });
   }
 }
 
@@ -68,18 +103,18 @@ export function persistLearningState(
 
   try {
     // Create backup before overwriting
-    if (fs.existsSync(LEARNING_STATE_FILE)) {
+    if (fs.existsSync(stateFile())) {
       createBackup();
     }
 
     // Write current state
     fs.writeFileSync(
-      LEARNING_STATE_FILE,
-      JSON.stringify(persistentState, null, 2),
+      stateFile(),
+      stringifyLearningState(persistentState),
       'utf-8'
     );
 
-    console.log(`✅ Learning state persisted to ${LEARNING_STATE_FILE}`);
+    console.log(`✅ Learning state persisted to ${stateFile()}`);
     console.log(`   Timestamp: ${persistentState.timestamp}`);
     console.log(`   Confidence: ${(state.learningConfidence * 100).toFixed(0)}%`);
     console.log(`   Patterns: ${patterns.length}`);
@@ -95,16 +130,16 @@ export function persistLearningState(
 export function loadLearningState(): PersistentLearningState | null {
   ensureDirectories();
 
-  if (!fs.existsSync(LEARNING_STATE_FILE)) {
+  if (!fs.existsSync(stateFile())) {
     console.log('ℹ️  No existing learning state found — starting fresh');
     return null;
   }
 
   try {
-    const content = fs.readFileSync(LEARNING_STATE_FILE, 'utf-8');
-    const persistedState: PersistentLearningState = JSON.parse(content);
+    const content = fs.readFileSync(stateFile(), 'utf-8');
+    const persistedState = parseLearningState(content);
 
-    console.log(`✅ Learning state loaded from ${LEARNING_STATE_FILE}`);
+    console.log(`✅ Learning state loaded from ${stateFile()}`);
     console.log(`   Timestamp: ${persistedState.timestamp}`);
     console.log(`   Confidence: ${(persistedState.state.learningConfidence * 100).toFixed(0)}%`);
     console.log(`   Patterns: ${persistedState.patterns.length}`);
@@ -123,15 +158,15 @@ export function loadLearningState(): PersistentLearningState | null {
 export function createBackup(): string {
   ensureDirectories();
 
-  if (!fs.existsSync(LEARNING_STATE_FILE)) {
+  if (!fs.existsSync(stateFile())) {
     throw new Error('No learning state file to backup');
   }
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const backupFile = path.join(LEARNING_BACKUP_DIR, `learning-state-${timestamp}.json`);
+  const backupFile = path.join(backupDir(), `learning-state-${timestamp}.json`);
 
   try {
-    fs.copyFileSync(LEARNING_STATE_FILE, backupFile);
+    fs.copyFileSync(stateFile(), backupFile);
     console.log(`✅ Backup created: ${backupFile}`);
     return backupFile;
   } catch (error) {
@@ -147,7 +182,7 @@ export function countBackups(): number {
   ensureDirectories();
 
   try {
-    const files = fs.readdirSync(LEARNING_BACKUP_DIR);
+    const files = fs.readdirSync(backupDir());
     return files.filter((f) => f.startsWith('learning-state-')).length;
   } catch {
     return 0;
@@ -161,11 +196,11 @@ export function listBackups(): Array<{ file: string; timestamp: string; size: nu
   ensureDirectories();
 
   try {
-    const files = fs.readdirSync(LEARNING_BACKUP_DIR);
+    const files = fs.readdirSync(backupDir());
     return files
       .filter((f) => f.startsWith('learning-state-'))
       .map((file) => {
-        const fullPath = path.join(LEARNING_BACKUP_DIR, file);
+        const fullPath = path.join(backupDir(), file);
         const stat = fs.statSync(fullPath);
         const timestamp = file.replace('learning-state-', '').replace('.json', '');
         return { file, timestamp, size: stat.size };
@@ -181,7 +216,7 @@ export function listBackups(): Array<{ file: string; timestamp: string; size: nu
  * Restore from a specific backup
  */
 export function restoreFromBackup(backupFile: string): PersistentLearningState | null {
-  const fullPath = path.join(LEARNING_BACKUP_DIR, backupFile);
+  const fullPath = path.join(backupDir(), backupFile);
 
   if (!fs.existsSync(fullPath)) {
     console.error(`❌ Backup file not found: ${fullPath}`);
@@ -190,12 +225,12 @@ export function restoreFromBackup(backupFile: string): PersistentLearningState |
 
   try {
     const content = fs.readFileSync(fullPath, 'utf-8');
-    const restoredState: PersistentLearningState = JSON.parse(content);
+    const restoredState = parseLearningState(content);
 
     // Write back to main state file
     fs.writeFileSync(
-      LEARNING_STATE_FILE,
-      JSON.stringify(restoredState, null, 2),
+      stateFile(),
+      stringifyLearningState(restoredState),
       'utf-8'
     );
 
@@ -222,21 +257,21 @@ export function getLearningStateStatus(): {
   size?: number;
   lastModified?: string;
 } {
-  if (!fs.existsSync(LEARNING_STATE_FILE)) {
+  if (!fs.existsSync(stateFile())) {
     return {
       exists: false,
-      path: LEARNING_STATE_FILE,
+      path: stateFile(),
     };
   }
 
   try {
-    const stat = fs.statSync(LEARNING_STATE_FILE);
-    const content = fs.readFileSync(LEARNING_STATE_FILE, 'utf-8');
-    const parsed = JSON.parse(content) as PersistentLearningState;
+    const stat = fs.statSync(stateFile());
+    const content = fs.readFileSync(stateFile(), 'utf-8');
+    const parsed = parseLearningState(content);
 
     return {
       exists: true,
-      path: LEARNING_STATE_FILE,
+      path: stateFile(),
       timestamp: parsed.timestamp,
       confidence: parsed.state.learningConfidence,
       runCount: parsed.state.totalRuns,
@@ -246,7 +281,7 @@ export function getLearningStateStatus(): {
   } catch (error) {
     return {
       exists: false,
-      path: LEARNING_STATE_FILE,
+      path: stateFile(),
     };
   }
 }
@@ -316,13 +351,13 @@ export function clearAllLearningState(confirmed: boolean = false): boolean {
   ensureDirectories();
 
   try {
-    if (fs.existsSync(LEARNING_STATE_FILE)) {
-      fs.unlinkSync(LEARNING_STATE_FILE);
+    if (fs.existsSync(stateFile())) {
+      fs.unlinkSync(stateFile());
       console.log('✅ Deleted learning state file');
     }
 
     // Note: Don't delete backups automatically
-    console.log('ℹ️  Backups preserved in:', LEARNING_BACKUP_DIR);
+    console.log('ℹ️  Backups preserved in:', backupDir());
     return true;
   } catch (error) {
     console.error('❌ Failed to clear learning state:', error);
@@ -340,7 +375,7 @@ export function syncLearningState(
 ): void {
   const { branch = 'unknown', project = 'dusukbutce-mobile', createBackup: backup = true } = options;
 
-  if (backup && fs.existsSync(LEARNING_STATE_FILE)) {
+  if (backup && fs.existsSync(stateFile())) {
     createBackup();
   }
 
