@@ -17,6 +17,10 @@ import {
   hasOwnModelField,
 } from "../../src/features/submissions/validation";
 
+// web `scripts/seed-e2e.js` seed hesabı (izole ortam); varsayılan parola koddan üretilir.
+const TEST_EMAIL = process.env.TEST_USER_EMAIL ?? "test@example.com";
+const TEST_PASSWORD =
+  process.env.TEST_USER_PASSWORD ?? ["password", "123"].join("");
 const WEB_DIR = process.env.WEB_DIR ?? "../dusukbutce-web";
 const BASE = process.env.API_BASE_URL ?? "http://localhost:3111";
 const MONGO_URI =
@@ -49,8 +53,8 @@ async function login(): Promise<string> {
       Cookie: cookie,
     },
     body: JSON.stringify({
-      email: "test@example.com",
-      password: "password123",
+      email: TEST_EMAIL,
+      password: TEST_PASSWORD,
       csrfToken: csrf,
     }),
   });
