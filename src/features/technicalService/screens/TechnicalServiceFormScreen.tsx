@@ -10,7 +10,7 @@ import { PillSelectField } from '../components/PillSelectField';
 import { APPOINTMENT_TIME_SLOTS, SHIPPING_METHOD_OPTIONS } from '../data/technicalServiceOptions';
 import { DeliveryMethod, technicalServiceRepository } from '../api/technicalServiceRepository';
 import { ApiException } from '../../../core/network/apiException';
-import { getRepairEstimate, type PerplexityAnswer } from '../../../core/ai/perplexity';
+import { estimatesRepository, type EstimateAnswer } from '../../ai/api/estimatesRepository';
 
 interface Props {
   serviceType: string;
@@ -37,7 +37,7 @@ export function TechnicalServiceFormScreen({ serviceType, deliveryMethod }: Prop
   const [districtPickerOpen, setDistrictPickerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{ submissionId: string } | null>(null);
-  const [repairEstimate, setRepairEstimate] = useState<PerplexityAnswer | null>(null);
+  const [repairEstimate, setRepairEstimate] = useState<EstimateAnswer | null>(null);
   const [isLoadingEstimate, setIsLoadingEstimate] = useState(false);
 
   const districtOptions = city ? TURKEY_PROVINCES[city] ?? [] : [];
@@ -50,7 +50,7 @@ export function TechnicalServiceFormScreen({ serviceType, deliveryMethod }: Prop
     }
     setIsLoadingEstimate(true);
     try {
-      const result = await getRepairEstimate(deviceInfo, problemDescription);
+      const result = await estimatesRepository.repairEstimate(deviceInfo, problemDescription);
       setRepairEstimate(result);
     } catch (error) {
       setRepairEstimate({
