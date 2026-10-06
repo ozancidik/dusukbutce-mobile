@@ -129,6 +129,11 @@ jobs:
     needs: [orchestrate, optimize, performance]
     if: always()
     timeout-minutes: 5
+    # PR'a yorum yazabilmek için; varsayılan GITHUB_TOKEN salt-okunur (403: Resource not accessible)
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -168,7 +173,7 @@ jobs:
               ? fs.readFileSync('./.ecc/ci-report.md', 'utf8')
               : '📊 Learning report not available';
 
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,

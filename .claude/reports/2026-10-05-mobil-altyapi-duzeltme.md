@@ -24,7 +24,10 @@ Dal: `fix/mobile-altyapi-duzeltme` (origin/main `d3e2ea7` üzerine 4 commit).
 - Testler gerçek `~/.ecc/`'ye yazdığı için orada 116 test artığı birikmişti (boş durum / test projesi; kimliği doğrulandı). **Silinmedi**, `/tmp/ecc-test-artifacts-quarantine/` altına taşındı (geri alınabilir). Gerçek `master-orchestration.yaml` yerinde.
 - **Olay:** çalışma sırasında, `git worktree add` başarısız olduğu halde `;` ile zincirlenen `npm install` ana dizinde çalıştı ve çalışma ağacındaki commit'siz `package.json`/`package-lock.json`'a `express` ekledi. `npm uninstall` ile geri alındı; lock dosyası eski boyutuna (12578 satır fark) döndü, `package.json` yalnızca bilinen hunk'ları içeriyor, JSON geçerli. Bu dosyalar hâlâ commit'siz duruyor (içeriği PR #3'te commit'lendi).
 
+## CI ilk koşu sonucu (PR #3)
+Node 18 ile `Run Learning Orchestration`, `Apply Learning Optimizations`, `Check Performance Budgets` **geçti** (Node endişesi gerçekleşmedi). Kalan tek kırmızı `Generate Learning Reports`: workflow'da `permissions:` yoktu, `GITHUB_TOKEN` PR'a yorum yazamıyordu (403 *Resource not accessible by integration*); ayrıca `createComment` çağrısında `await` eksikti. Rapor işine `issues/pull-requests: write` izni ve `await` eklendi.
+
 ## Doğrulanamayanlar / sıradaki
-- **CI bu PR'ın kendi koşusuyla ilk kez doğrulanıyor.** Workflow Node 18 kullanıyor, `.nvmrc` yok; Expo 57 / RN 0.86 daha yeni Node ister. `npm ci` Node 18'de başarısız olursa `NODE_VERSION` yükseltilmeli.
+- Workflow hâlâ Node 18 (CI'da çalıştı ama Expo 57 / RN 0.86 daha yeni Node ister; ileride yükseltmek mantıklı).
 - Mobile ekranları cihazda/simülatörde hâlâ çalıştırılmadı (mobile form akışı doğrulaması yapılmadı). İzole backend gerektirir.
 - `suggestions.ts` içindeki kullanılmayan `riskMap` ve 39 ESLint uyarısı (`src/core/ai`) duruyor.
