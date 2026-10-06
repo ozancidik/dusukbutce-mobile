@@ -6,7 +6,7 @@ import { theme } from '../../../core/theme/theme';
 import { listingsRepository } from '../api/listingsRepository';
 import { getCategoryLabel } from '../categories';
 import { getListingTitle } from '../../../shared/models/Listing';
-import { getPriceEstimate, type PerplexityAnswer } from '../../../core/ai/perplexity';
+import { estimatesRepository, type EstimateAnswer } from '../../ai/api/estimatesRepository';
 
 interface Props {
   id: string;
@@ -23,7 +23,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 export function ListingDetailScreen({ id }: Props) {
   const [activeImage, setActiveImage] = useState(0);
-  const [priceConsultant, setPriceConsultant] = useState<PerplexityAnswer | null>(null);
+  const [priceConsultant, setPriceConsultant] = useState<EstimateAnswer | null>(null);
   const [isLoadingPrice, setIsLoadingPrice] = useState(false);
 
   const { data: listing, isLoading, isError } = useQuery({
@@ -36,7 +36,7 @@ export function ListingDetailScreen({ id }: Props) {
     setIsLoadingPrice(true);
     try {
       const title = getListingTitle(listing);
-      const result = await getPriceEstimate(title);
+      const result = await estimatesRepository.priceEstimate(title);
       setPriceConsultant(result);
     } catch (error) {
       setPriceConsultant({

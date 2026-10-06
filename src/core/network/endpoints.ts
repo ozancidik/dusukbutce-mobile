@@ -13,6 +13,7 @@ export const endpoints = {
   technicalServiceSubmissions: '/api/technical-service-submissions',
   listings: '/api/listings',
   listingDetail: (id: string) => `/api/listings/${id}`,
+  aiEstimate: '/api/ai/estimate',
 };
 
 // Bu uçlar 401'de otomatik logout tetiklemeyecek istisnalar — henüz oturum
